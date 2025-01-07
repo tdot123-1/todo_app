@@ -2,7 +2,7 @@ import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle`
     body {
-        margin: 0 2rem;
+        margin: 0 1.5rem;
         background-color: ${(props) => props.theme.bgColor};
         font-family: Roboto, sans-serif;
         color: ${(props) => props.theme.textColor};
@@ -26,4 +26,6 @@ export const theme = {
   textColor: "#3d3d3d",
   primaryColor: "#021d54",
   secondaryColor: "#49525c",
+  dangerColor: "#de1421",
+  successColor: "#14de32"
 };

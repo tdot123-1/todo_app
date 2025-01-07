@@ -61,3 +61,13 @@ h6 {
 #__next {
   isolation: isolate;
 }
+
+/* 
+  10. remove default style on <a> tags
+*/
+
+a {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}

@@ -1,9 +1,10 @@
-import { Route, Routes } from "react-router";
+
 import Home from "./pages/Home";
 import AllTasks from "./pages/AllTasks";
 import TaskDetails from "./pages/TaskDetails";
 import EditTask from "./pages/EditTask";
 import CreateTask from "./pages/CreateTask";
+import { Route, Routes } from "react-router-dom";
 
 function App() {
   return (

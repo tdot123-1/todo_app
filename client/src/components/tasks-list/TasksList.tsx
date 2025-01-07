@@ -8,7 +8,6 @@ const TasksList = () => {
 
   useEffect(() => {
     const fetchAllTasks = async () => {
-      console.log(import.meta.env.REACT_APP_API_URL);
       try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/tasks`);
         if (!response.ok) {

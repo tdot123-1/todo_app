@@ -5,9 +5,10 @@ export const TaskContainer = styled.div`
   border-radius: 10px;
   padding: 1rem;
   transition: transform 0.2s;
+  cursor: pointer;
 
   &:hover {
-    transform: translateY(-2px); /* Lift effect on hover */
+    transform: translateY(-2px); 
   }
 `;
 

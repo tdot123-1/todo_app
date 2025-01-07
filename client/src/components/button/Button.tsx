@@ -2,7 +2,7 @@ import { StyledButton } from "./Button.styles";
 
 interface ButtonProps {
   children: React.ReactNode;
-  variant?: "primary" | "secondary";
+  variant?: "primary" | "secondary" | "danger" | "success";
   onClick?: () => void;
 }
 
