@@ -5,8 +5,30 @@ from typing import Annotated
 from sqlmodel import select
 from uuid import UUID
 from datetime import datetime
+from dotenv import load_dotenv
+import os
+from fastapi.middleware.cors import CORSMiddleware
 
+# load .env variables
+load_dotenv()
+
+# create app instance
 app = FastAPI()
+
+# get client URL from env
+client_url = os.getenv("CLIENT_URL")
+
+origins = [
+    client_url,
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 @app.on_event("startup")
 def on_startup():
