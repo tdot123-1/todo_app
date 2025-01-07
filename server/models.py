@@ -9,20 +9,31 @@ class Priority(int, Enum):
     MEDIUM = 3
     HIGH = 2
     VERY_HIGH = 1
-    
-    
-class TaskSchema(SQLModel, table=True):
-    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+
+
+# base model with all fields shared across other models
+class TaskBase(SQLModel):
     title: str
-    description: str | None = None
+    description: str 
     priority: Priority = Field(default=Priority.VERY_LOW)
+    deadline: datetime | None = Field(default=None, index=True)
+
+
+# sql table (including id and timestamps)
+class Task(TaskBase, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     created: datetime = Field(default_factory=datetime.now)
-    deadline: datetime | None = None
+    updated: datetime = Field(default_factory=datetime.now)
     
 
-class TaskCreate(SQLModel):
-    title: str
-    description: str
-    priority: Priority = Priority.VERY_LOW
+# create task (has only base model fields)
+class TaskCreate(TaskBase):
+    pass
+
+
+# update task (all fields optional, timestamp automatically added)
+class TaskUpdate(TaskBase):
+    title: str | None = None
+    description: str | None = None
+    priority: Priority | None = None
     deadline: datetime | None = None
-    

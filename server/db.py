@@ -1,7 +1,7 @@
 from typing import Annotated
 from sqlmodel import create_engine, SQLModel, Session
 from fastapi import Depends
-from models import TaskSchema
+from models import Task
 
 # create db engine
 sqlite_file_name = "todo_app.db"

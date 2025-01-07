@@ -1,8 +1,10 @@
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, HTTPException
 from db import create_db_and_tables, SessionDep
-from models import TaskSchema, TaskCreate
+from models import Task, TaskCreate, TaskUpdate
 from typing import Annotated
 from sqlmodel import select
+from uuid import UUID
+from datetime import datetime
 
 app = FastAPI()
 
@@ -16,25 +18,30 @@ async def root():
     return {"message": "Hello World"}
 
 
-@app.get("/items/{item_id}")
-async def read_item(item_id: int):
-    return {"item_id": item_id}
-
-
 @app.get("/tasks")
 def read_all_tasks(
     session: SessionDep,
     offset: int = 0,
     limit: Annotated[int, Query(le=100)] = 100
-) -> list[TaskSchema]:
-    tasks = session.exec(select(TaskSchema).offset(offset).limit(limit)).all()
+) -> list[Task]:
+    tasks = session.exec(select(Task).offset(offset).limit(limit)).all()
     return tasks
     
 
+@app.get("/tasks/{task_id}")
+def read_one_task(
+    task_id: UUID,
+    session: SessionDep
+) -> Task:
+    task = session.get(Task, task_id)
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    return task
+
 
 @app.post("/tasks/create")
-def create_task(task: TaskCreate, session: SessionDep) -> TaskSchema:
-    new_task = TaskSchema(
+def create_task(task: TaskCreate, session: SessionDep) -> Task:
+    new_task = Task(
         title=task.title,
         description=task.description,
         priority=task.priority,
@@ -44,3 +51,35 @@ def create_task(task: TaskCreate, session: SessionDep) -> TaskSchema:
     session.commit()
     session.refresh(new_task)
     return new_task
+
+
+@app.patch("/tasks/update/{task_id}")
+def update_task(task_id: UUID, taskUpdate: TaskUpdate, session: SessionDep):
+    task_db = session.get(Task, task_id)
+    if not task_db:
+        raise HTTPException(status_code=404, detail="Task not found")
+    
+    # convert model into dict, include only provided fields
+    task_data = taskUpdate.model_dump(exclude_unset=True)
+    
+    # manually set updated timestamp
+    task_data["updated"] = datetime.now()
+    
+    # update existing db object woth values from dict
+    task_db.sqlmodel_update(task_data)
+    
+    # save updated task
+    session.add(task_db)
+    session.commit()
+    session.refresh(task_db)
+    return task_db
+
+
+@app.delete("/tasks/delete/{task_id}")
+def delete_task(task_id: UUID, session: SessionDep):
+    task = session.get(Task, task_id)
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    session.delete(task)
+    session.commit()
+    return {"success": True}
