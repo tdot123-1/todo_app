@@ -1,18 +1,20 @@
-import { Button } from "./components/button/Button";
+import { Route, Routes } from "react-router";
+import Home from "./pages/Home";
+import AllTasks from "./pages/AllTasks";
+import TaskDetails from "./pages/TaskDetails";
+import EditTask from "./pages/EditTask";
+import CreateTask from "./pages/CreateTask";
 
 function App() {
   return (
     <>
-      <h1>TODO App</h1>
-      <h2>Subtitle</h2>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum ab
-        vero quas odio voluptatibus voluptate perspiciatis libero ipsam,
-        explicabo adipisci incidunt. Repellat optio ut delectus aut voluptatibus
-        minima, iste expedita!
-      </p>
-      <Button variant="primary">Click Here!</Button>
-      <Button variant="secondary">Click Here!</Button>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/tasks" element={<AllTasks />} />
+        <Route path="/tasks/:taskId" element={<TaskDetails />} />
+        <Route path="/tasks/:taskId/edit" element={<EditTask />} />
+        <Route path="/tasks/create" element={<CreateTask />} />
+      </Routes>
     </>
   );
 }
