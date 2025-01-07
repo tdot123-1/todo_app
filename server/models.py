@@ -15,7 +15,7 @@ class Priority(int, Enum):
 class TaskBase(SQLModel):
     title: str
     description: str 
-    priority: Priority = Field(default=Priority.VERY_LOW)
+    priority: Priority | None = Field(default=Priority.VERY_LOW)
     deadline: datetime | None = Field(default=None, index=True)
 
 

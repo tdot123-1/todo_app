@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { Task } from "../../types";
 import { Button } from "../button/Button";
+import {
+  ButtonContainer,
+  DetailsTextBox,
+  TaskDetailsCard,
+  Wrapper,
+} from "./TaskDetails.styles";
 
 interface TaskDetailsCompProps {
   taskId: string;
@@ -30,37 +36,51 @@ const TaskDetailsComp = ({ taskId }: TaskDetailsCompProps) => {
   }, []);
   return (
     <>
-      {taskData ? (
-        <div>
-          <h2>{taskData.title}</h2>
-          <div>
-            <p>{taskData.description}</p>
-          </div>
-          <div>
-            <p>Priority</p>
-            <p>{taskData.priority}</p>
-          </div>
-          <div>
-            <p>Deadline</p>
-            <p>{taskData.deadline}</p>
-          </div>
-          <div>
-            <p>Created</p>
-            <p>{taskData.created}</p>
-          </div>
-          <div>
-            <p>Updated</p>
-            <p>{taskData.updated}</p>
-          </div>
-          <div>
-            <Button>Edit Task</Button>
-            <Button variant="success">Finish Task</Button>
-            <Button variant="danger">Delete Task</Button>
-          </div>
-        </div>
-      ) : (
-        <p>Not Found</p>
-      )}
+      <Wrapper>
+        {taskData ? (
+          <TaskDetailsCard>
+            <div>
+              <h2>{taskData.title}</h2>
+              <div>
+                <p>{taskData.description}</p>
+              </div>
+              <DetailsTextBox>
+                <p>Priority</p>
+                <p>{taskData.priority}</p>
+              </DetailsTextBox>
+              <DetailsTextBox>
+                <p>Deadline</p>
+                <p>
+                  {taskData.deadline
+                    ? new Date(taskData.deadline).toLocaleString()
+                    : "N/A"}
+                </p>
+              </DetailsTextBox>
+              <DetailsTextBox>
+                <p>Created</p>
+                <p>
+                  {taskData.created
+                    ? new Date(taskData.created).toLocaleString()
+                    : "N/A"}
+                </p>
+              </DetailsTextBox>
+              <DetailsTextBox>
+                <p>Updated</p>
+                {taskData.updated
+                  ? new Date(taskData.updated).toLocaleString()
+                  : "N/A"}
+              </DetailsTextBox>
+              <ButtonContainer>
+                <Button>Edit Task</Button>
+                <Button variant="success">Finish Task</Button>
+                <Button variant="danger">Delete Task</Button>
+              </ButtonContainer>
+            </div>
+          </TaskDetailsCard>
+        ) : (
+          <p>Not Found</p>
+        )}
+      </Wrapper>
     </>
   );
 };
