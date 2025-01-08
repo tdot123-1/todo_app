@@ -22,7 +22,7 @@ export const StyledButton = styled.button<{
     }
   }};
 
-  color: #ffffff;
+  color: ${(props) => props.theme.tertiaryColor};
   &:hover {
     opacity: 0.9;
   }

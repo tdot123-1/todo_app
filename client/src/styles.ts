@@ -2,10 +2,14 @@ import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle`
     body {
-        margin: 0 1.5rem;
-        background-color: ${(props) => props.theme.bgColor};
         font-family: Roboto, sans-serif;
         color: ${(props) => props.theme.textColor};
+    }
+
+    main {
+        padding: 1rem 1.5rem;
+        background-color: ${(props) => props.theme.bgColor};
+        min-height: 80vh;
     }
 
     h1 {
@@ -24,11 +28,11 @@ export const GlobalStyle = createGlobalStyle`
 export const theme = {
   bgColor: "#d6d6d6",
   textColor: "#3d3d3d",
-  primaryColor: "#021d54",
+  primaryColor: "#030f2b",
   secondaryColor: "#49525c",
+  tertiaryColor: "#ebf0f5",
   dangerColor: "#de1421",
-  successColor: "#14de32"
+  successColor: "#14de32",
 };
-
 
 // reused styles
