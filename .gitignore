@@ -26,6 +26,8 @@ dist-ssr
 *.sln
 *.sw?
 
+## FastAPI
+
 # Python virtual environment
 server/.venv/
 
@@ -33,8 +35,7 @@ server/.venv/
 *.pyc
 __pycache__/
 
-# env files
+# other
 *.env
-
-# db
 *.db
+notes.txt

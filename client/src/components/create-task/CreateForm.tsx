@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Button } from "../button/Button";
+import TaskForm from "../form/TaskForm";
 
 const CreateForm = () => {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ const CreateForm = () => {
       deadline: rawTask.deadline ? rawTask.deadline : null,
     };
 
-    console.log("Task Submitted: ", task)
+    console.log("Task Submitted: ", task);
 
     try {
       const response = await fetch(
@@ -40,39 +40,9 @@ const CreateForm = () => {
   };
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "2rem" }}>
-          <label htmlFor="title">
-            Title<span>*</span>
-          </label>
-          <input name="title" id="title" type="text" required />
-        </div>
-        <div style={{ marginBottom: "2rem" }}>
-          <label htmlFor="description">
-            Description<span>*</span>
-          </label>
-          <textarea name="description" id="description" required />
-        </div>
-        <div style={{ marginBottom: "2rem" }}>
-          <label htmlFor="priority">Priority</label>
-          <select name="priority" id="priority">
-            <option value={""}>Please select a priority</option>
-            <option value={1}>Very High</option>
-            <option value={2}>High</option>
-            <option value={3}>Medium</option>
-            <option value={4}>Low</option>
-            <option value={5}>Very Low</option>
-          </select>
-        </div>
-        <div style={{ marginBottom: "2rem" }}>
-          <label>Deadline</label>
-          <input name="deadline" id="deadline" type="text" />
-        </div>
-        <div>
-          <Button variant="secondary">Cancel</Button>
-          <Button type="submit">Create</Button>
-        </div>
-      </form>
+      <div>
+        <TaskForm onSubmit={handleSubmit} />
+      </div>
     </>
   );
 };

@@ -1,12 +1,8 @@
 import { useEffect, useState } from "react";
 import { Task } from "../../types";
 import { Button } from "../button/Button";
-import {
-  ButtonContainer,
-  DetailsTextBox,
-  TaskDetailsCard,
-  Wrapper,
-} from "./TaskDetails.styles";
+import { DetailsTextBox, TaskDetailsCard, Wrapper } from "./TaskDetails.styles";
+import { ButtonContainer } from "../button/Button.styles";
 
 interface TaskDetailsCompProps {
   taskId: string;

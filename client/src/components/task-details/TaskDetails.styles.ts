@@ -20,8 +20,3 @@ export const DetailsTextBox = styled.div`
   justify-content: space-between;
 `;
 
-export const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: space-evenly;
-  margin-top: 1rem;
-`;

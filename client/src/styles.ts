@@ -29,3 +29,6 @@ export const theme = {
   dangerColor: "#de1421",
   successColor: "#14de32"
 };
+
+
+// reused styles

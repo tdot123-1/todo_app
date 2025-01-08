@@ -11,10 +11,10 @@ export const Button = ({
   children,
   variant = "primary",
   onClick,
-  type
+  type = "button",
 }: ButtonProps) => {
   return (
-    <StyledButton type={type ? type : "button"} variant={variant} onClick={onClick}>
+    <StyledButton type={type} $variant={variant} onClick={onClick}>
       {children}
     </StyledButton>
   );

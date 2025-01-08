@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const StyledButton = styled.button<{
-  variant: "primary" | "secondary" | "danger" | "success";
+  $variant: "primary" | "secondary" | "danger" | "success";
 }>`
   padding: 0.5rem 1rem;
   font-size: 0.7rem;
@@ -10,7 +10,7 @@ export const StyledButton = styled.button<{
   border-radius: 10px;
   cursor: pointer;
   background-color: ${(props) => {
-    switch (props.variant) {
+    switch (props.$variant) {
       case "secondary":
         return props.theme.secondaryColor;
       case "danger":
@@ -26,4 +26,10 @@ export const StyledButton = styled.button<{
   &:hover {
     opacity: 0.9;
   }
+`;
+
+export const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 1rem;
 `;
