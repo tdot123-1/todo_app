@@ -4,6 +4,7 @@ import { Button } from "../button/Button";
 import { DetailsTextBox, TaskDetailsCard, Wrapper } from "./TaskDetails.styles";
 import { ButtonContainer } from "../button/Button.styles";
 import { Link } from "react-router-dom";
+import DeleteTaskButton from "../delete-task/DeleteTaskButton";
 
 interface TaskDetailsCompProps {
   taskId: string;
@@ -68,11 +69,11 @@ const TaskDetailsComp = ({ taskId }: TaskDetailsCompProps) => {
                   : "N/A"}
               </DetailsTextBox>
               <ButtonContainer>
-                <Link to={`/tasks/${taskId}/edit`}>
+                <Link to={`/tasks/${taskData.id}/edit`}>
                   <Button>Edit Task</Button>
                 </Link>
                 <Button variant="success">Finish Task</Button>
-                <Button variant="danger">Delete Task</Button>
+                <DeleteTaskButton taskId={taskData.id} />
               </ButtonContainer>
             </div>
           </TaskDetailsCard>
