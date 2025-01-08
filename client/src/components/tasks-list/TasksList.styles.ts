@@ -6,7 +6,8 @@ export const TasksGrid = styled.div`
   gap: 1rem;
   padding: 1rem;
   border-radius: 10px;
-  background-color: #1f1f1f; 
+  background-color: #1f1f1f;
+  margin: 2rem 0; 
 
   @media (min-width: 600px) {
     grid-template-columns: repeat(2, 1fr);

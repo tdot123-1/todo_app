@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Task } from "../../types";
 import { Button } from "../button/Button";
 import { ButtonContainer } from "../button/Button.styles";
@@ -63,7 +64,9 @@ const TaskForm = ({ onSubmit, task }: TaskFormProps) => {
           />
         </InputContainer>
         <ButtonContainer>
-          <Button variant="secondary">Cancel</Button>
+          <Link to={`/tasks`}>
+            <Button variant="secondary">Cancel</Button>
+          </Link>
           <Button type="submit">Create</Button>
         </ButtonContainer>
       </form>

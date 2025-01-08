@@ -3,6 +3,7 @@ import { Task } from "../../types";
 import { Button } from "../button/Button";
 import { DetailsTextBox, TaskDetailsCard, Wrapper } from "./TaskDetails.styles";
 import { ButtonContainer } from "../button/Button.styles";
+import { Link } from "react-router-dom";
 
 interface TaskDetailsCompProps {
   taskId: string;
@@ -67,7 +68,9 @@ const TaskDetailsComp = ({ taskId }: TaskDetailsCompProps) => {
                   : "N/A"}
               </DetailsTextBox>
               <ButtonContainer>
-                <Button>Edit Task</Button>
+                <Link to={`/tasks/${taskId}/edit`}>
+                  <Button>Edit Task</Button>
+                </Link>
                 <Button variant="success">Finish Task</Button>
                 <Button variant="danger">Delete Task</Button>
               </ButtonContainer>
