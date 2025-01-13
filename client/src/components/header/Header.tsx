@@ -29,12 +29,12 @@ const Header = () => {
             <NavLink
               key={link.href}
               to={link.href}
+              end
               style={({ isActive }) =>
                 isActive
                   ? { fontWeight: "bold" }
                   : {
-                      textDecoration: "none",
-                      hover: { textDecoration: "underline" },
+                      textDecoration: "underline",
                     }
               }
             >

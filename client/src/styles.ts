@@ -7,7 +7,7 @@ export const GlobalStyle = createGlobalStyle`
     }
 
     main {
-        padding: 1rem 1.5rem;
+        padding: 1.5rem 1rem;
         background-color: ${(props) => props.theme.bgColor};
         min-height: 80vh;
     }

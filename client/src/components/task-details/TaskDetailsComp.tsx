@@ -3,8 +3,10 @@ import { Task } from "../../types";
 import { Button } from "../button/Button";
 import { DetailsTextBox, TaskDetailsCard, Wrapper } from "./TaskDetails.styles";
 import { ButtonContainer } from "../button/Button.styles";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import DeleteTaskButton from "../delete-task/DeleteTaskButton";
+import FetchError from "../fetch-error/FetchError";
+import Loading from "../loading/Loading";
 
 interface TaskDetailsCompProps {
   taskId: string;
@@ -12,26 +14,49 @@ interface TaskDetailsCompProps {
 
 const TaskDetailsComp = ({ taskId }: TaskDetailsCompProps) => {
   const [taskData, setTaskData] = useState<Task>();
+  const [error, setError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+
+  const navigate = useNavigate();
+
+  const fetchTask = async () => {
+    setError(false);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/tasks/${taskId}`
+      );
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          return navigate("/task-not-found");
+        }
+        throw new Error(`Response status: ${response.status}`);
+      }
+
+      const data: Task = await response.json();
+      setTaskData(data);
+    } catch (error: any) {
+      setError(true);
+      console.error("Failed to fetch task: ", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchTask = async () => {
-      try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/tasks/${taskId}`
-        );
-
-        if (!response.ok) {
-          throw new Error(`Response status: ${response.status}`);
-        }
-
-        const data: Task = await response.json();
-        setTaskData(data);
-      } catch (error) {
-        console.error("Failed to fetch task: ", error);
-      }
-    };
     fetchTask();
-  }, []);
+  }, [retryCount]);
+
+  const handleRetry = () => {
+    setRetryCount((prev) => prev + 1);
+  };
+
+  if (error) {
+    return (
+      <>
+        <FetchError handleRetry={handleRetry} />
+      </>
+    );
+  }
+
   return (
     <>
       <Wrapper>
@@ -78,8 +103,13 @@ const TaskDetailsComp = ({ taskId }: TaskDetailsCompProps) => {
             </div>
           </TaskDetailsCard>
         ) : (
-          <p>Not Found</p>
+          <Loading />
         )}
+      </Wrapper>
+      <Wrapper>
+        <Link to={`/tasks`}>
+          <Button variant={`secondary`}>Return</Button>
+        </Link>
       </Wrapper>
     </>
   );
