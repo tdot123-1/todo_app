@@ -2,11 +2,16 @@ import { useEffect, useState } from "react";
 import { Task } from "../../types";
 import { Button } from "../button/Button";
 import { DetailsTextBox, TaskDetailsCard, Wrapper } from "./TaskDetails.styles";
-import { ButtonContainer } from "../button/Button.styles";
+import { ButtonContainer, ButtonContent } from "../button/Button.styles";
 import { Link, useNavigate } from "react-router-dom";
 import DeleteTaskButton from "../delete-task/DeleteTaskButton";
 import FetchError from "../fetch-error/FetchError";
 import Loading from "../loading/Loading";
+import {
+  IconArrowBack,
+  IconClipboardCheck,
+  IconClipboardSearch,
+} from "@tabler/icons-react";
 
 interface TaskDetailsCompProps {
   taskId: string;
@@ -95,9 +100,19 @@ const TaskDetailsComp = ({ taskId }: TaskDetailsCompProps) => {
               </DetailsTextBox>
               <ButtonContainer>
                 <Link to={`/tasks/${taskData.id}/edit`}>
-                  <Button>Edit Task</Button>
+                  <Button>
+                    <ButtonContent>
+                      <IconClipboardSearch size={20} />
+                      <span>Edit</span>
+                    </ButtonContent>
+                  </Button>
                 </Link>
-                <Button variant="success">Finish Task</Button>
+                <Button variant="success">
+                  <ButtonContent>
+                    <IconClipboardCheck size={20} />
+                    <span>Finish</span>
+                  </ButtonContent>
+                </Button>
                 <DeleteTaskButton taskId={taskData.id} />
               </ButtonContainer>
             </div>
@@ -108,7 +123,12 @@ const TaskDetailsComp = ({ taskId }: TaskDetailsCompProps) => {
       </Wrapper>
       <Wrapper>
         <Link to={`/tasks`}>
-          <Button variant={`secondary`}>Return</Button>
+          <Button variant={`secondary`}>
+            <ButtonContent>
+              <IconArrowBack size={20} />
+              <span>Return</span>
+            </ButtonContent>
+          </Button>
         </Link>
       </Wrapper>
     </>

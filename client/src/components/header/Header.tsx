@@ -1,18 +1,27 @@
 import { Link, NavLink } from "react-router-dom";
-import { Logo, StyledHeader, StyledNavbar } from "./Header.styles";
+import { Logo, StyledHeader, StyledLink, StyledNavbar } from "./Header.styles";
+import {
+  IconClipboardCheck,
+  IconClipboardList,
+  IconClipboardPlus,
+  IconHome,
+} from "@tabler/icons-react";
 
 const navlinks = [
   {
     page: "Home",
     href: "/",
+    icon: IconHome,
   },
   {
     page: "Tasks",
     href: "/tasks",
+    icon: IconClipboardList,
   },
   {
     page: "Create",
     href: "/tasks/create",
+    icon: IconClipboardPlus,
   },
 ];
 
@@ -21,7 +30,10 @@ const Header = () => {
     <>
       <StyledHeader>
         <Link to={"/"}>
-          <Logo>TODO</Logo>
+          <Logo>
+            <IconClipboardCheck size={"3rem"} />
+            <h3>TODO</h3>
+          </Logo>
         </Link>
 
         <StyledNavbar>
@@ -38,7 +50,10 @@ const Header = () => {
                     }
               }
             >
-              {link.page}
+              <StyledLink>
+                <link.icon />
+                {link.page}
+              </StyledLink>
             </NavLink>
           ))}
         </StyledNavbar>

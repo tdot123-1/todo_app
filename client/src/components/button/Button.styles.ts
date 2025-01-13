@@ -33,3 +33,10 @@ export const ButtonContainer = styled.div`
   justify-content: space-evenly;
   margin-top: 1rem;
 `;
+
+export const ButtonContent = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3px;
+`;

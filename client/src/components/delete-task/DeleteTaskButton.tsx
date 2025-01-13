@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "../button/Button";
+import { ButtonContent } from "../button/Button.styles";
+import { IconClipboardX } from "@tabler/icons-react";
 
 interface DeleteTaskButtonProps {
   taskId: string;
@@ -30,7 +32,10 @@ const DeleteTaskButton = ({ taskId }: DeleteTaskButtonProps) => {
   return (
     <>
       <Button onClick={handleDelete} variant={`danger`}>
-        Delete
+        <ButtonContent>
+          <IconClipboardX size={20} />
+          <span>Delete</span>
+        </ButtonContent>
       </Button>
     </>
   );

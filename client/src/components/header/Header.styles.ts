@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { theme } from "../../styles";
 
 export const StyledHeader = styled.header`
   padding: 1rem;
@@ -14,6 +15,21 @@ export const StyledNavbar = styled.nav`
   gap: 0.8rem;
 `;
 
-export const Logo = styled.h3`
-  font-size: 2.5rem;
+export const Logo = styled.div`
+  display: flex;
+  align-items: center;
+  font-size: 2rem;
+  gap: 0.1rem;
+  flex-direction: column;
+
+  @media (min-width: ${theme.breakpoints.sm}) {
+    font-size: 2.2rem;
+    flex-direction: row;
+  }
 `;
+
+export const StyledLink = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 3px;
+`
