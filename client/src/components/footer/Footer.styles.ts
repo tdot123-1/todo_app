@@ -15,6 +15,7 @@ export const FooterUl = styled.ul`
   flex-direction: column;
   gap: 1.5rem;
   list-style: none;
+  padding: 0;
 
   @media (min-width: ${theme.breakpoints.md}) {
     flex-direction: row;

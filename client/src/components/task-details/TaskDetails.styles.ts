@@ -12,8 +12,8 @@ export const TaskDetailsCard = styled.div`
   padding: 1rem;
   text-align: center;
   width: fit-content;
-  min-width: 18rem;
-  max-width: full;
+  max-width: 100%;
+  position: relative;
 `;
 
 export const DetailsTextBox = styled.div`

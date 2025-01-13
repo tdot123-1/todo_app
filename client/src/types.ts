@@ -6,6 +6,7 @@ export interface Task {
   deadline: string | null;
   created: string;
   updated: string;
+  completed: boolean;
 }
 
 export const TaskPriority: { [key: number]: string} = {

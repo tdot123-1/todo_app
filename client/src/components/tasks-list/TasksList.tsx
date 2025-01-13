@@ -1,16 +1,22 @@
 import { useEffect, useState } from "react";
 import { Task } from "../../types";
 import TaskListItem from "./TaskListItem";
-import { TasksGrid } from "./TasksList.styles";
+import { EmptyTasksList, TasksGrid } from "./TasksList.styles";
 import FetchError from "../fetch-error/FetchError";
 import Loading from "../loading/Loading";
+import { Button } from "../button/Button";
+import { ButtonContent } from "../button/Button.styles";
+import { IconClipboardPlus } from "@tabler/icons-react";
+import { Link } from "react-router-dom";
 
 const TasksList = () => {
   const [allTasks, setAllTasks] = useState<Task[]>([]);
   const [error, setError] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchAllTasks = async () => {
+    setIsLoading(true);
     setError(false);
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/tasks`);
@@ -25,6 +31,8 @@ const TasksList = () => {
     } catch (error) {
       console.error("Failed to fetch tasks data: ", error);
       setError(true);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -40,8 +48,12 @@ const TasksList = () => {
     return <FetchError handleRetry={handleRetry} />;
   }
 
+  if (isLoading) {
+    return <Loading />;
+  }
+
   return (
-    <div>
+    <>
       {allTasks.length ? (
         <>
           <TasksGrid>
@@ -51,9 +63,20 @@ const TasksList = () => {
           </TasksGrid>
         </>
       ) : (
-        <Loading />
+        <EmptyTasksList>
+          <p>No tasks added yet.</p>
+          <h2>Create Your First!</h2>
+          <Link to={"/tasks/create"}>
+            <Button>
+              <ButtonContent>
+                <IconClipboardPlus size={20} />
+                <span>Create</span>
+              </ButtonContent>
+            </Button>
+          </Link>
+        </EmptyTasksList>
       )}
-    </div>
+    </>
   );
 };
 

@@ -25,7 +25,7 @@ const EditForm = ({ task }: EditFormProps) => {
 
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/tasks/update/${task.id}`,
+        `${import.meta.env.VITE_API_URL}/tasks/${task.id}`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },

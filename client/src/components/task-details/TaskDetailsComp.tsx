@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Task } from "../../types";
+import { Task, TaskPriority } from "../../types";
 import { Button } from "../button/Button";
 import { DetailsTextBox, TaskDetailsCard, Wrapper } from "./TaskDetails.styles";
 import { ButtonContainer, ButtonContent } from "../button/Button.styles";
@@ -9,9 +9,12 @@ import FetchError from "../fetch-error/FetchError";
 import Loading from "../loading/Loading";
 import {
   IconArrowBack,
-  IconClipboardCheck,
+  IconCheckbox,
   IconClipboardSearch,
 } from "@tabler/icons-react";
+import FinishTaskButton from "../finish-task/FinishTaskButton";
+import { theme } from "../../styles";
+import { CheckBoxWrapper } from "../tasks-list/TaskListItem.styles";
 
 interface TaskDetailsCompProps {
   taskId: string;
@@ -67,52 +70,58 @@ const TaskDetailsComp = ({ taskId }: TaskDetailsCompProps) => {
       <Wrapper>
         {taskData ? (
           <TaskDetailsCard>
+            {taskData.completed && (
+              <CheckBoxWrapper>
+                <IconCheckbox
+                  size={theme.iconSizes.md}
+                  color={theme.primaryColor}
+                />
+              </CheckBoxWrapper>
+            )}
             <div>
               <h2>{taskData.title}</h2>
-              <div>
+              <div style={{ marginBottom: "1rem" }}>
                 <p>{taskData.description}</p>
               </div>
               <DetailsTextBox>
-                <p>Priority</p>
-                <p>{taskData.priority}</p>
+                <p>Priority:</p>
+                <p>{TaskPriority[taskData.priority]}</p>
               </DetailsTextBox>
               <DetailsTextBox>
-                <p>Deadline</p>
+                <p>Deadline:</p>
                 <p>
                   {taskData.deadline
-                    ? new Date(taskData.deadline).toLocaleString()
+                    ? new Date(taskData.deadline).toLocaleDateString()
                     : "N/A"}
                 </p>
               </DetailsTextBox>
               <DetailsTextBox>
-                <p>Created</p>
+                <p>Created:</p>
                 <p>
                   {taskData.created
-                    ? new Date(taskData.created).toLocaleString()
+                    ? new Date(taskData.created).toLocaleDateString()
                     : "N/A"}
                 </p>
               </DetailsTextBox>
               <DetailsTextBox>
-                <p>Updated</p>
+                <p>Updated:</p>
                 {taskData.updated
-                  ? new Date(taskData.updated).toLocaleString()
+                  ? new Date(taskData.updated).toLocaleDateString()
                   : "N/A"}
               </DetailsTextBox>
               <ButtonContainer>
-                <Link to={`/tasks/${taskData.id}/edit`}>
-                  <Button>
+                <Button>
+                  <Link to={`/tasks/${taskData.id}/edit`}>
                     <ButtonContent>
-                      <IconClipboardSearch size={20} />
+                      <IconClipboardSearch size={theme.iconSizes.button} />
                       <span>Edit</span>
                     </ButtonContent>
-                  </Button>
-                </Link>
-                <Button variant="success">
-                  <ButtonContent>
-                    <IconClipboardCheck size={20} />
-                    <span>Finish</span>
-                  </ButtonContent>
+                  </Link>
                 </Button>
+                <FinishTaskButton
+                  isFinished={taskData.completed}
+                  taskId={taskData.id}
+                />
                 <DeleteTaskButton taskId={taskData.id} />
               </ButtonContainer>
             </div>

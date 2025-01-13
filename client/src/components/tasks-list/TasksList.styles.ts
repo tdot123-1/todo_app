@@ -28,3 +28,12 @@ export const TasksGrid = styled.div`
     padding: 2rem;
   }
 `;
+
+export const EmptyTasksList = styled.div`
+  margin-top: 5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+`;

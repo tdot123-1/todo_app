@@ -1,6 +1,7 @@
 import styled from "styled-components";
 
 export const TaskContainer = styled.div`
+  position: relative;
   background-color: #8a9ad4;
   border-radius: 10px;
   padding: 1rem;
@@ -11,6 +12,12 @@ export const TaskContainer = styled.div`
     transform: translateY(-2px); 
   }
 `;
+
+export const CheckBoxWrapper = styled.div`
+  position: absolute;
+  top: 2px; 
+  right: 2px;
+`
 
 export const TaskContainerText = styled.div`
     display: flex;

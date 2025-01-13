@@ -6,6 +6,7 @@ import {
   IconClipboardPlus,
   IconHome,
 } from "@tabler/icons-react";
+import { theme } from "../../styles";
 
 const navlinks = [
   {
@@ -31,11 +32,10 @@ const Header = () => {
       <StyledHeader>
         <Link to={"/"}>
           <Logo>
-            <IconClipboardCheck size={"3rem"} />
+            <IconClipboardCheck size={theme.iconSizes.logo} />
             <h3>TODO</h3>
           </Logo>
         </Link>
-
         <StyledNavbar>
           {navlinks.map((link) => (
             <NavLink
@@ -51,7 +51,7 @@ const Header = () => {
               }
             >
               <StyledLink>
-                <link.icon />
+                <link.icon size={theme.iconSizes.nav} />
                 {link.page}
               </StyledLink>
             </NavLink>

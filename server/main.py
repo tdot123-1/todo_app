@@ -61,7 +61,7 @@ def read_one_task(
     return task
 
 
-@app.post("/tasks/create")
+@app.post("/tasks")
 def create_task(task: TaskCreate, session: SessionDep) -> Task:
     new_task = Task(
         title=task.title,
@@ -75,7 +75,7 @@ def create_task(task: TaskCreate, session: SessionDep) -> Task:
     return new_task
 
 
-@app.patch("/tasks/update/{task_id}")
+@app.patch("/tasks/{task_id}")
 def update_task(task_id: UUID, taskUpdate: TaskUpdate, session: SessionDep):
     task_db = session.get(Task, task_id)
     if not task_db:
@@ -97,7 +97,7 @@ def update_task(task_id: UUID, taskUpdate: TaskUpdate, session: SessionDep):
     return task_db
 
 
-@app.delete("/tasks/delete/{task_id}")
+@app.delete("/tasks/{task_id}")
 def delete_task(task_id: UUID, session: SessionDep):
     task = session.get(Task, task_id)
     if not task:

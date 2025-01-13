@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Task } from "../../types";
 import { Button } from "../button/Button";
-import { ButtonContainer } from "../button/Button.styles";
+import { ButtonContainer, ButtonContent } from "../button/Button.styles";
 import {
   FormWrapper,
   Input,
@@ -10,6 +10,8 @@ import {
   Select,
   TextArea,
 } from "./TaskForm.styles";
+import { IconArrowBack, IconUpload } from "@tabler/icons-react";
+import { theme } from "../../styles";
 
 interface TaskFormProps {
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
@@ -59,15 +61,25 @@ const TaskForm = ({ onSubmit, task }: TaskFormProps) => {
           <Input
             name="deadline"
             id="deadline"
-            type="text"
+            type="date"
             defaultValue={task?.deadline ? task.deadline : ""}
           />
         </InputContainer>
         <ButtonContainer>
           <Link to={`/tasks`}>
-            <Button variant="secondary">Cancel</Button>
+            <Button variant="secondary">
+              <ButtonContent>
+                <IconArrowBack size={theme.iconSizes.button} />
+                <span>Cancel</span>
+              </ButtonContent>
+            </Button>
           </Link>
-          <Button type="submit">Create</Button>
+          <Button type="submit">
+            <ButtonContent>
+              <IconUpload size={theme.iconSizes.button} />
+              <span>Save</span>
+            </ButtonContent>
+          </Button>
         </ButtonContainer>
       </form>
     </FormWrapper>

@@ -17,11 +17,12 @@ class TaskBase(SQLModel):
     description: str 
     priority: Priority | None = Field(default=Priority.VERY_LOW)
     deadline: datetime | None = Field(default=None, index=True)
+    completed: bool = Field(default=False)
 
 
 # sql table (including id and timestamps)
 class Task(TaskBase, table=True):
-    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
     created: datetime = Field(default_factory=datetime.now)
     updated: datetime = Field(default_factory=datetime.now)
     
@@ -37,3 +38,4 @@ class TaskUpdate(TaskBase):
     description: str | None = None
     priority: Priority | None = None
     deadline: datetime | None = None
+    completed: bool | None = None

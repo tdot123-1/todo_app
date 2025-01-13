@@ -5,6 +5,7 @@ interface ButtonProps {
   variant?: "primary" | "secondary" | "danger" | "success";
   onClick?: () => void;
   type?: "button" | "submit";
+  disabled?: boolean
 }
 
 export const Button = ({
@@ -12,9 +13,10 @@ export const Button = ({
   variant = "primary",
   onClick,
   type = "button",
+  disabled = false,
 }: ButtonProps) => {
   return (
-    <StyledButton type={type} $variant={variant} onClick={onClick}>
+    <StyledButton type={type} $variant={variant} onClick={onClick} disabled={disabled}>
       {children}
     </StyledButton>
   );

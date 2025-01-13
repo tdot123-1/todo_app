@@ -20,7 +20,7 @@ const CreateForm = () => {
 
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/tasks/create`,
+        `${import.meta.env.VITE_API_URL}/tasks/`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

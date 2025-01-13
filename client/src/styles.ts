@@ -38,6 +38,12 @@ export const theme = {
     md: "768px",
     lg: "1024px",
   },
+  iconSizes: {
+    button: 20,
+    nav: 24,
+    logo: 50,
+    md: 30,
+  },
 };
 
 // reused styles

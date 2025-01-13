@@ -13,18 +13,24 @@ export const StyledHeader = styled.header`
 export const StyledNavbar = styled.nav`
   display: flex;
   gap: 0.8rem;
+  flex-direction: column;
+
+  @media (min-width: ${theme.breakpoints.sm}) {
+    flex-direction: row;
+  }
 `;
 
 export const Logo = styled.div`
   display: flex;
   align-items: center;
   font-size: 2rem;
-  gap: 0.1rem;
+
   flex-direction: column;
 
   @media (min-width: ${theme.breakpoints.sm}) {
     font-size: 2.2rem;
     flex-direction: row;
+    gap: 0.1rem;
   }
 `;
 
@@ -32,4 +38,4 @@ export const StyledLink = styled.div`
   display: flex;
   align-items: center;
   gap: 3px;
-`
+`;

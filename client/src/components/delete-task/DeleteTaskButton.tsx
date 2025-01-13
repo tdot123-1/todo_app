@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "../button/Button";
 import { ButtonContent } from "../button/Button.styles";
-import { IconClipboardX } from "@tabler/icons-react";
+import { IconTrash } from "@tabler/icons-react";
+import { theme } from "../../styles";
 
 interface DeleteTaskButtonProps {
   taskId: string;
@@ -13,7 +14,7 @@ const DeleteTaskButton = ({ taskId }: DeleteTaskButtonProps) => {
   const handleDelete = async () => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/tasks/delete/${taskId}`,
+        `${import.meta.env.VITE_API_URL}/tasks/${taskId}`,
         {
           method: "DELETE",
         }
@@ -33,7 +34,7 @@ const DeleteTaskButton = ({ taskId }: DeleteTaskButtonProps) => {
     <>
       <Button onClick={handleDelete} variant={`danger`}>
         <ButtonContent>
-          <IconClipboardX size={20} />
+          <IconTrash size={theme.iconSizes.button} />
           <span>Delete</span>
         </ButtonContent>
       </Button>
