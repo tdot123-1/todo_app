@@ -16,5 +16,4 @@ export const StyledNavbar = styled.nav`
 
 export const Logo = styled.h3`
   font-size: 2.5rem;
-
 `;

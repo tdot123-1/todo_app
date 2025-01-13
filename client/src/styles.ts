@@ -33,6 +33,11 @@ export const theme = {
   tertiaryColor: "#ebf0f5",
   dangerColor: "#de1421",
   successColor: "#14de32",
+  breakpoints: {
+    sm: "480px",
+    md: "768px",
+    lg: "1024px",
+  },
 };
 
 // reused styles
