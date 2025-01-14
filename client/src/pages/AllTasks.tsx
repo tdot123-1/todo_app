@@ -8,12 +8,14 @@ const AllTasks = () => {
 
   useEffect(() => {
     const pageQuery = searchParams.get("page");
+    console.log("Current page: ", pageQuery)
     if (pageQuery) {
       setCurrentPage(parseInt(pageQuery));
     } else {
-      setCurrentPage(1);
+      setCurrentPage(1); 
     }
   }, [searchParams]);
+  
   return (
     <>
       <h1>All Tasks</h1>

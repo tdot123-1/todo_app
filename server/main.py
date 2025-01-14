@@ -46,15 +46,16 @@ def read_all_tasks(
     session: SessionDep,
     offset: int = 0,
     limit: Annotated[int, Query(le=100)] = 100
-) -> list[Task]:
+) -> dict:
     tasks = session.exec(select(Task).offset(offset).limit(limit)).all()
-    return tasks
+    total_count = session.exec(select(func.count(Task.id))).one()
+    return {"tasks": tasks, "total_count": total_count}
 
 
 @app.get("/tasks/count")
-def read_tasks_count(session: SessionDep) -> int:
-    total_count = session.exec((select([func.count(Task.id)]))).one()
-    return total_count
+def read_tasks_count(session: SessionDep) -> dict:
+    total_count = session.exec(select(func.count(Task.id))).one()
+    return {"total": total_count}
 
 
 @app.get("/tasks/{task_id}")

@@ -10,18 +10,18 @@ import { IconClipboardPlus } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import ClearCompletedButton from "../clear-completed-tasks/ClearCompletedButton";
 import Pagination from "../pagination/Pagination";
+import { LIMIT } from "../../constants";
 
 interface TasksListProps {
   page: number;
 }
-
-const LIMIT = 6;
 
 const TasksList = ({ page = 1 }: TasksListProps) => {
   const [allTasks, setAllTasks] = useState<Task[]>([]);
   const [error, setError] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [totalItems, setTotalItems] = useState(0);
 
   const fetchAllTasks = async () => {
     setIsLoading(true);
@@ -38,7 +38,8 @@ const TasksList = ({ page = 1 }: TasksListProps) => {
 
       const data = await response.json();
 
-      setAllTasks(data);
+      setAllTasks(data.tasks);
+      setTotalItems(data.total_count);
     } catch (error) {
       console.error("Failed to fetch tasks data: ", error);
       setError(true);
@@ -50,12 +51,16 @@ const TasksList = ({ page = 1 }: TasksListProps) => {
   // retry fetching data in case of error
   useEffect(() => {
     fetchAllTasks();
-    console.log("Length: ", allTasks.length)
   }, [retryCount]);
 
   const handleRetry = () => {
     setRetryCount((prev) => prev + 1);
   };
+
+  // refetch when page changes
+  useEffect(() => {
+    fetchAllTasks();
+  }, [page]);
 
   // show error state
   if (error) {
@@ -77,7 +82,7 @@ const TasksList = ({ page = 1 }: TasksListProps) => {
               <TaskListItem key={task.id} task={task} />
             ))}
           </TasksGrid>
-          <Pagination currentPage={page} totalItems={allTasks.length} />
+          <Pagination currentPage={page} totalItems={totalItems} />
         </>
       ) : (
         <EmptyTasksList>

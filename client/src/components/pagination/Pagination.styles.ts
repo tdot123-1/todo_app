@@ -7,10 +7,19 @@ export const Wrapper = styled.div`
   gap: 0.5rem;
 `;
 
-export const PaginationLink = styled.div`
-  border: solid;
+export const PaginationLink = styled.div<{
+  $active: boolean;
+  $disabled?: boolean;
+}>`
+  border: none;
   border-radius: 10px;
   width: fit-content;
-  padding: 1rem;
-  font-style: bold;
+  padding: 0.5rem;
+  font-weight: bold;
+  background-color: ${(props) =>
+    props.$active ? props.theme.primaryColor : props.theme.tertiaryColor};
+  color: ${(props) =>
+    props.$active ? props.theme.tertiaryColor : props.theme.primaryColor};
+  cursor: ${(props) => (props.$disabled ? "not-allowed" : "pointer")};
+  opacity: ${(props) => (props.$disabled ? 0.5 : 1)};
 `;
