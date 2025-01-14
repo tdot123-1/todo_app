@@ -8,12 +8,14 @@ import { Button } from "../button/Button";
 import { ButtonContent } from "../button/Button.styles";
 import { IconClipboardPlus } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
+import ClearCompletedButton from "../clear-completed-tasks/ClearCompletedButton";
 
 const TasksList = () => {
   const [allTasks, setAllTasks] = useState<Task[]>([]);
   const [error, setError] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  // const [completedTasks, setCompletedTasks] = useState<string[]>([]);
 
   const fetchAllTasks = async () => {
     setIsLoading(true);
@@ -27,7 +29,6 @@ const TasksList = () => {
       const data = await response.json();
 
       setAllTasks(data);
-      // console.log(data);
     } catch (error) {
       console.error("Failed to fetch tasks data: ", error);
       setError(true);
@@ -36,6 +37,21 @@ const TasksList = () => {
     }
   };
 
+  // set initial state of completed task id's on component when data is fetched
+  // useEffect(() => {
+  //   const newCompletedTasks = allTasks
+  //     .filter((task) => task.completed)
+  //     .map((task) => task.id);
+  //   setCompletedTasks((prev) => [...prev, ...newCompletedTasks]);
+  //   console.log("Completed tasks: ", completedTasks.length)
+  // }, [allTasks]);
+
+  // add new task id to array of completed
+  // const addCompletedTask = (taskId: string) => {
+  //   setCompletedTasks((prev) => [...prev, taskId]);
+  // };
+
+  // retry fetching data in case of error
   useEffect(() => {
     fetchAllTasks();
   }, [retryCount]);
@@ -44,10 +60,12 @@ const TasksList = () => {
     setRetryCount((prev) => prev + 1);
   };
 
+  // show error state
   if (error) {
     return <FetchError handleRetry={handleRetry} />;
   }
 
+  // show loading state
   if (isLoading) {
     return <Loading />;
   }
@@ -56,6 +74,7 @@ const TasksList = () => {
     <>
       {allTasks.length ? (
         <>
+          <ClearCompletedButton tasks={allTasks} />
           <TasksGrid>
             {allTasks.map((task) => (
               <TaskListItem key={task.id} task={task} />

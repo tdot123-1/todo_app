@@ -66,14 +66,15 @@ const TaskForm = ({ onSubmit, task }: TaskFormProps) => {
           />
         </InputContainer>
         <ButtonContainer>
-          <Link to={`/tasks`}>
-            <Button variant="secondary">
+          <Button variant="secondary">
+            <Link to={`/tasks`}>
               <ButtonContent>
                 <IconArrowBack size={theme.iconSizes.button} />
                 <span>Cancel</span>
               </ButtonContent>
-            </Button>
-          </Link>
+            </Link>
+          </Button>
+
           <Button type="submit">
             <ButtonContent>
               <IconUpload size={theme.iconSizes.button} />

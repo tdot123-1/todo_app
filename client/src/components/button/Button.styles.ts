@@ -29,6 +29,11 @@ export const StyledButton = styled.button<{
     opacity: 0.9;
   }
 
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
   @media (min-width: ${theme.breakpoints.sm}) {
     width: fit-content;
   }

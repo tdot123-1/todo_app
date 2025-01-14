@@ -1,8 +1,8 @@
-from fastapi import FastAPI, Query, HTTPException
+from fastapi import FastAPI, Query, HTTPException, Body
 from db import create_db_and_tables, SessionDep
 from models import Task, TaskCreate, TaskUpdate
 from typing import Annotated
-from sqlmodel import select
+from sqlmodel import select, delete
 from uuid import UUID
 from datetime import datetime
 from dotenv import load_dotenv
@@ -105,3 +105,18 @@ def delete_task(task_id: UUID, session: SessionDep):
     session.delete(task)
     session.commit()
     return {"success": True}
+
+
+@app.delete("/tasks/bulk-delete")
+def bulk_delete_tasks(session: SessionDep, task_ids: list[UUID] = Body(...)):
+    try:
+        # cast id's to uuid
+        # task_ids_as_uuid = [UUID(task_id) for task_id in task_ids]
+        
+        # delete every task in received list
+        session.exec(delete(Task).where(Task.id.in_(task_ids)))
+        session.commit()
+        return {"success": True}
+    except Exception as e:
+        session.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
