@@ -97,18 +97,8 @@ def update_task(task_id: UUID, taskUpdate: TaskUpdate, session: SessionDep):
     return task_db
 
 
-@app.delete("/tasks/{task_id}")
-def delete_task(task_id: UUID, session: SessionDep):
-    task = session.get(Task, task_id)
-    if not task:
-        raise HTTPException(status_code=404, detail="Task not found")
-    session.delete(task)
-    session.commit()
-    return {"success": True}
-
-
 @app.delete("/tasks/bulk-delete")
-def bulk_delete_tasks(session: SessionDep, task_ids: list[UUID] = Body(...)):
+def bulk_delete_tasks(task_ids: list[UUID], session: SessionDep):
     try:
         # cast id's to uuid
         # task_ids_as_uuid = [UUID(task_id) for task_id in task_ids]
@@ -120,3 +110,13 @@ def bulk_delete_tasks(session: SessionDep, task_ids: list[UUID] = Body(...)):
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
+    
+
+@app.delete("/tasks/{task_id}")
+def delete_task(task_id: UUID, session: SessionDep):
+    task = session.get(Task, task_id)
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    session.delete(task)
+    session.commit()
+    return {"success": True}

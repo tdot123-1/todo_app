@@ -7,9 +7,10 @@ import { Task } from "../../types";
 
 interface ClearCompletedButtonProps {
   tasks: Task[];
+  refetch: () => void;
 }
 
-const ClearCompletedButton = ({ tasks }: ClearCompletedButtonProps) => {
+const ClearCompletedButton = ({ tasks, refetch }: ClearCompletedButtonProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -45,6 +46,7 @@ const ClearCompletedButton = ({ tasks }: ClearCompletedButtonProps) => {
 
       if (response.ok) {
         console.log("Tasks deleted");
+        refetch()
       } else {
         throw new Error(`Error deleting tasks: ${response.status}`);
       }

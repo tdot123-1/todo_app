@@ -37,20 +37,6 @@ const TasksList = () => {
     }
   };
 
-  // set initial state of completed task id's on component when data is fetched
-  // useEffect(() => {
-  //   const newCompletedTasks = allTasks
-  //     .filter((task) => task.completed)
-  //     .map((task) => task.id);
-  //   setCompletedTasks((prev) => [...prev, ...newCompletedTasks]);
-  //   console.log("Completed tasks: ", completedTasks.length)
-  // }, [allTasks]);
-
-  // add new task id to array of completed
-  // const addCompletedTask = (taskId: string) => {
-  //   setCompletedTasks((prev) => [...prev, taskId]);
-  // };
-
   // retry fetching data in case of error
   useEffect(() => {
     fetchAllTasks();
@@ -74,7 +60,7 @@ const TasksList = () => {
     <>
       {allTasks.length ? (
         <>
-          <ClearCompletedButton tasks={allTasks} />
+          <ClearCompletedButton tasks={allTasks} refetch={handleRetry} />
           <TasksGrid>
             {allTasks.map((task) => (
               <TaskListItem key={task.id} task={task} />
