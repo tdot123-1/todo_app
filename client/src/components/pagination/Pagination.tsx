@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { PaginationLink, Wrapper } from "./Pagination.styles";
 import { Link } from "react-router-dom";
-import { LIMIT } from "../../constants";
+import { LIMIT, MAX_PAGINATION_LINKS } from "../../constants";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import { theme } from "../../styles";
 import { generatePagination } from "../../utils";
@@ -13,15 +13,15 @@ interface PaginationProps {
 
 const Pagination = ({ totalItems, currentPage }: PaginationProps) => {
   const [totalPages, setTotalPages] = useState(0);
-  const [pages, setPages] = useState<(number | string)[]>([]);
+  //   const [pages, setPages] = useState<(number | string)[]>([]);
 
   useEffect(() => {
     setTotalPages(Math.ceil(totalItems / LIMIT));
   }, [totalItems]);
 
-  useEffect(() => {
-    setPages(generatePagination(totalPages, currentPage));
-  });
+  // useEffect(() => {
+  //   setPages(generatePagination(totalPages, currentPage));
+  // }, [currentPage]);
 
   return (
     <Wrapper>
@@ -36,28 +36,30 @@ const Pagination = ({ totalItems, currentPage }: PaginationProps) => {
           </PaginationLink>
         </Link>
       )}
-      {/* {Array(totalPages)
-        .fill(0)
-        .map((_, index) => (
-          <Link key={index} to={`/tasks?page=${index + 1}`}>
-            <PaginationLink $active={currentPage === index + 1}>
-              {index + 1}
-            </PaginationLink>
-          </Link>
-        ))} */}
-      {pages.map((page, index) => {
+      {generatePagination(totalPages, currentPage).map((page, index) => {
         if (typeof page === "string") {
+          // calculate where to which page the ellipses should lead based on current page
+          let nextPage: number;
+          if (currentPage <= MAX_PAGINATION_LINKS) {
+            nextPage = index + 1;
+          } else if (currentPage > totalPages - MAX_PAGINATION_LINKS) {
+            nextPage = totalPages - MAX_PAGINATION_LINKS;
+          } else {
+            nextPage = currentPage + 2;
+          }
           return (
-            <PaginationLink key={`${page}-${index}`} $active={false}>
-              {page}
-            </PaginationLink>
+            <Link to={`/tasks?page=${nextPage}`} key={`${page}-${index}`}>
+              <PaginationLink $active={false}>{page}</PaginationLink>
+            </Link>
           );
         } else {
-          <Link key={`${page}-${index}`} to={`/tasks?page=${page}`}>
-            <PaginationLink $active={currentPage === page}>
-              {page}
-            </PaginationLink>
-          </Link>;
+          return (
+            <Link key={`${page}-${index}`} to={`/tasks?page=${page}`}>
+              <PaginationLink $active={currentPage === page}>
+                {page}
+              </PaginationLink>
+            </Link>
+          );
         }
       })}
       {totalPages >= 1 && (
