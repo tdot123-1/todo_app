@@ -46,6 +46,7 @@ const ClearCompletedButton = ({ tasks, refetch }: ClearCompletedButtonProps) => 
 
       if (response.ok) {
         console.log("Tasks deleted");
+        // refetch the list of tasks after deletion
         refetch()
       } else {
         throw new Error(`Error deleting tasks: ${response.status}`);

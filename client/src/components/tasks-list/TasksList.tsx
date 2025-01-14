@@ -9,19 +9,29 @@ import { ButtonContent } from "../button/Button.styles";
 import { IconClipboardPlus } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import ClearCompletedButton from "../clear-completed-tasks/ClearCompletedButton";
+import Pagination from "../pagination/Pagination";
 
-const TasksList = () => {
+interface TasksListProps {
+  page: number;
+}
+
+const LIMIT = 6;
+
+const TasksList = ({ page = 1 }: TasksListProps) => {
   const [allTasks, setAllTasks] = useState<Task[]>([]);
   const [error, setError] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  // const [completedTasks, setCompletedTasks] = useState<string[]>([]);
 
   const fetchAllTasks = async () => {
     setIsLoading(true);
     setError(false);
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/tasks`);
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/tasks?limit=${LIMIT}&offset=${
+          LIMIT * page - LIMIT
+        }`
+      );
       if (!response.ok) {
         throw new Error(`Response status: ${response.status}`);
       }
@@ -40,6 +50,7 @@ const TasksList = () => {
   // retry fetching data in case of error
   useEffect(() => {
     fetchAllTasks();
+    console.log("Length: ", allTasks.length)
   }, [retryCount]);
 
   const handleRetry = () => {
@@ -66,6 +77,7 @@ const TasksList = () => {
               <TaskListItem key={task.id} task={task} />
             ))}
           </TasksGrid>
+          <Pagination currentPage={page} totalItems={allTasks.length} />
         </>
       ) : (
         <EmptyTasksList>

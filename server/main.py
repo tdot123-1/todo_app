@@ -8,6 +8,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 import os
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import func
 
 # load .env variables
 load_dotenv()
@@ -48,7 +49,13 @@ def read_all_tasks(
 ) -> list[Task]:
     tasks = session.exec(select(Task).offset(offset).limit(limit)).all()
     return tasks
-    
+
+
+@app.get("/tasks/count")
+def read_tasks_count(session: SessionDep) -> int:
+    total_count = session.exec((select([func.count(Task.id)]))).one()
+    return total_count
+
 
 @app.get("/tasks/{task_id}")
 def read_one_task(
@@ -100,9 +107,6 @@ def update_task(task_id: UUID, taskUpdate: TaskUpdate, session: SessionDep):
 @app.delete("/tasks/bulk-delete")
 def bulk_delete_tasks(task_ids: list[UUID], session: SessionDep):
     try:
-        # cast id's to uuid
-        # task_ids_as_uuid = [UUID(task_id) for task_id in task_ids]
-        
         # delete every task in received list
         session.exec(delete(Task).where(Task.id.in_(task_ids)))
         session.commit()
