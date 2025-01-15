@@ -45,10 +45,37 @@ async def root():
 def read_all_tasks(
     session: SessionDep,
     offset: int = 0,
-    limit: Annotated[int, Query(le=100)] = 100
+    limit: Annotated[int, Query(le=100)] = 100,
+    sort_by: str = Query(default="updated", regex="^(priority|updated|deadline)$"),
+    order: str = Query(default="asc", regex="^(asc|desc)$")
 ) -> dict:
-    tasks = session.exec(select(Task).offset(offset).limit(limit)).all()
+    
+    # map sort fields to Task model attributes
+    sort_field_map = {
+        "priority": Task.priority,
+        "updated": Task.updated,
+        "deadline": Task.deadline
+    }
+    
+    # dynamically build sorting query
+    sort_field = sort_field_map.get(sort_by, Task.updated)
+    order_by_clause = sort_field.asc() if order == "asc" else sort_field.desc()
+    
+    task_query = (
+        session.exec(
+            select(Task)
+            .order_by(order_by_clause)
+            .offset(offset)
+            .limit(limit)
+        )
+    )
+    
+    tasks = task_query.all()
+    
+    # tasks = session.exec(select(Task).offset(offset).limit(limit)).all()
+    
     total_count = session.exec(select(func.count(Task.id))).one()
+    
     return {"tasks": tasks, "total_count": total_count}
 
 
