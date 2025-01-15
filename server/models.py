@@ -1,21 +1,12 @@
 from datetime import datetime
-from enum import Enum
 from sqlmodel import SQLModel, Field
 import uuid
-
-class Priority(int, Enum):
-    VERY_LOW = 5
-    LOW = 4
-    MEDIUM = 3
-    HIGH = 2
-    VERY_HIGH = 1
-
 
 # base model with all fields shared across other models
 class TaskBase(SQLModel):
     title: str
     description: str 
-    priority: Priority | None = Field(default=Priority.VERY_LOW)
+    priority: int | None = Field(default=5, le=5, ge=1, index=True)
     deadline: datetime | None = Field(default=None, index=True)
     completed: bool = Field(default=False)
 
@@ -24,7 +15,7 @@ class TaskBase(SQLModel):
 class Task(TaskBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
     created: datetime = Field(default_factory=datetime.now)
-    updated: datetime = Field(default_factory=datetime.now)
+    updated: datetime = Field(default_factory=datetime.now, index=True)
     
 
 # create task (has only base model fields)
@@ -36,6 +27,4 @@ class TaskCreate(TaskBase):
 class TaskUpdate(TaskBase):
     title: str | None = None
     description: str | None = None
-    priority: Priority | None = None
-    deadline: datetime | None = None
     completed: bool | None = None

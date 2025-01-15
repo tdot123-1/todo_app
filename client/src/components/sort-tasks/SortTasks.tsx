@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 interface SortTasksProps {
   sort: "updated" | "deadline" | "priority";
@@ -7,13 +7,14 @@ interface SortTasksProps {
 }
 
 const SortTasks = ({ sort, order }: SortTasksProps) => {
-  const orderOptions = ["updated", "deadline", "priority"];
+
   const [sortBy, setSortBy] = useState(sort);
   const [orderBy, setOrderBy] = useState(order);
   const [_, setSearchParams] = useSearchParams();
 
-//   const navigate = useNavigate();
+  const orderOptions = ["updated", "deadline", "priority"];
 
+  // update search params if sorting is applied to trigger refetch of data
   const updateParams = (sort: string, order: string) => {
     setSearchParams((prev) => {
       const newParams = new URLSearchParams(prev);
@@ -24,34 +25,23 @@ const SortTasks = ({ sort, order }: SortTasksProps) => {
     });
   };
 
+  // check if value is valid, set state, update search params
   const handleSortChange = (value: string) => {
     if (value === "updated" || value === "deadline" || value === "priority") {
       setSortBy(value);
-      //   navigate(`/tasks?page=1&sort=${sortBy}&order=asc`);
       updateParams(value, orderBy);
     }
   };
 
-  //   useEffect(() => {
-  //     setSearchParams((prev) => {
-  //       const newParams = new URLSearchParams(prev);
-  //       newParams.set("sort", sortBy);
-  //       newParams.set("order", orderBy);
-  //       newParams.set("page", "1");
-  //       return newParams;
-  //     });
-  //   }, [sortBy, orderBy]);
-
-  //   useEffect(() => {
-  //     navigate(`/tasks?page=1&sort=${sortBy}&order=${orderBy}`);
-  //   }, [sortBy, orderBy]);
-
+  // set state, update search params
   const handleClick = () => {
     setOrderBy((prev) => (prev === "asc" ? "desc" : "asc"));
     const newOrder = order === "asc" ? "desc" : "asc";
     updateParams(sortBy, newOrder);
   };
 
+
+  // temporary component to test sort function
   return (
     <>
       <div>

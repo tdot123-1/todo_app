@@ -5,6 +5,6 @@ export const LoadingContainer = styled.div`
   border-radius: 10px;
   background-color: #1f1f1f;
   margin: 0.5rem 0 2rem;
-  min-height: 25rem;
+  min-height: 28rem;
   color: ${(props) => props.theme.tertiaryColor};
 `;

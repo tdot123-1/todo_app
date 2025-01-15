@@ -9,7 +9,7 @@ export const TasksGrid = styled.div`
   border-radius: 10px;
   background-color: #1f1f1f;
   margin: 0.5rem 0 2rem;
-  min-height: 25rem;
+  min-height: 28rem;
 
   @media (min-width: ${theme.breakpoints.sm}) {
     grid-template-columns: repeat(2, 1fr);

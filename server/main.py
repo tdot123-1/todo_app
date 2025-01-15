@@ -1,6 +1,6 @@
-from fastapi import FastAPI, Query, HTTPException, Body
+from fastapi import FastAPI, Query, HTTPException
 from db import create_db_and_tables, SessionDep
-from models import Task, TaskCreate, TaskUpdate, Priority
+from models import Task, TaskCreate, TaskUpdate
 from typing import Annotated
 from sqlmodel import select, delete
 from uuid import UUID
@@ -8,7 +8,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 import os
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import func, case
+from sqlalchemy import func
 
 # load .env variables
 load_dotenv()
@@ -47,23 +47,14 @@ def read_all_tasks(
     offset: int = 0,
     limit: Annotated[int, Query(le=100)] = 100,
     sort_by: str = Query(default="updated", regex="^(priority|updated|deadline)$"),
-    order: str = Query(default="asc", regex="^(asc|desc)$")
+    order: str = Query(default="desc", regex="^(asc|desc)$")
 ) -> dict:
     
     # map sort fields to Task model attributes
     sort_field_map = {
         "updated": Task.updated,
         "deadline": Task.deadline,
-        "priority": case(
-            {
-                Priority.VERY_HIGH: 1,
-                Priority.HIGH: 2,
-                Priority.MEDIUM: 3,
-                Priority.LOW: 4,
-                Priority.VERY_LOW: 5,
-            },
-            else_=6
-        )
+        "priority": Task.priority
     }
     
     # dynamically build sorting query

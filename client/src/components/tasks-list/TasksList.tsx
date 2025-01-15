@@ -31,7 +31,7 @@ const TasksList = ({ queryOptions }: TasksListProps) => {
     setIsLoading(true);
     setError(false);
 
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    // await new Promise((resolve) => setTimeout(resolve, 1500));
     try {
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/tasks?limit=${LIMIT}&offset=${
@@ -46,7 +46,6 @@ const TasksList = ({ queryOptions }: TasksListProps) => {
 
       setAllTasks(data.tasks);
       if (totalItems === null) {
-        console.log("RECOUNT");
         setTotalItems(data.total_count);
       }
     } catch (error) {

@@ -7,18 +7,16 @@ const AllTasks = () => {
   const [searchParams] = useSearchParams();
   const [queryOptions, setQueryOptions] = useState<QueryOptions>({
     page: 1,
-    order: "asc",
+    order: "desc",
     sort: "updated",
   });
 
+
+  // get search params to pass down to components
   useEffect(() => {
     const pageQuery = searchParams.get("page");
     const orderQuery = searchParams.get("order");
     const sortQuery = searchParams.get("sort");
-
-    console.log("Current page: ", pageQuery);
-    console.log("order: ", orderQuery);
-    console.log("sort: ", sortQuery);
 
     setQueryOptions((prev) => ({
       ...prev,
