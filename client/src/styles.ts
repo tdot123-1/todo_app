@@ -2,26 +2,26 @@ import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle`
     body {
-        font-family: Roboto, sans-serif;
-        color: ${(props) => props.theme.textColor};
+      font-family: Roboto, sans-serif;
+      color: ${(props) => props.theme.textColor};
     }
 
     main {
-        padding: 1.5rem 1rem;
-        background-color: ${(props) => props.theme.bgColor};
-        min-height: 80vh;
+      padding: 1.5rem 1rem;
+      background-color: ${(props) => props.theme.bgColor};
+      min-height: 80vh;
     }
 
     h1 {
-        font-size: 3rem;
+      font-size: 3rem;
     }
     
     h2 {
-        font-size: 2rem;
+      font-size: 2rem;
     }
     
     p {
-        font-size: 1rem;
+      font-size: 1rem;
     }
 `;
 

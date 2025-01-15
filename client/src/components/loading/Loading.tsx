@@ -1,12 +1,13 @@
 import { IconLoader } from "@tabler/icons-react";
-import { Wrapper } from "./Loading.styles";
-import { theme } from "../../styles";
+import { Spinner, Wrapper } from "./Loading.styles";
 
 const Loading = () => {
   return (
     <Wrapper>
       <p>Fetching data...</p>
-      <IconLoader size={36} color={theme.primaryColor} />
+      <Spinner>
+        <IconLoader size={36} color="#8a9ad4" />
+      </Spinner>
     </Wrapper>
   );
 };

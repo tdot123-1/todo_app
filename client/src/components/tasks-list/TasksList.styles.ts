@@ -9,23 +9,24 @@ export const TasksGrid = styled.div`
   border-radius: 10px;
   background-color: #1f1f1f;
   margin: 0.5rem 0 2rem;
+  min-height: 25rem;
 
   @media (min-width: ${theme.breakpoints.sm}) {
     grid-template-columns: repeat(2, 1fr);
-    gap: 3rem;
-    padding: 2rem;
+    gap: 1.5rem;
+    padding: 1.5rem;
   }
 
   @media (min-width: ${theme.breakpoints.md}) {
     grid-template-columns: repeat(3, 1fr);
-    gap: 3rem;
+    gap: 2rem;
     padding: 2rem;
   }
 
   @media (min-width: ${theme.breakpoints.lg}) {
     grid-template-columns: repeat(4, 1fr);
-    gap: 3rem;
-    padding: 2rem;
+    gap: 2.5rem;
+    padding: 2.5rem;
   }
 `;
 

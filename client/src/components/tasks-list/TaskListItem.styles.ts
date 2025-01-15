@@ -7,6 +7,8 @@ export const TaskContainer = styled.div`
   padding: 1rem;
   transition: transform 0.2s;
   cursor: pointer;
+  height: 11rem;
+  overflow: auto;
 
   &:hover {
     transform: translateY(-2px); 

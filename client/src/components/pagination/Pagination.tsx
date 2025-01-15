@@ -38,7 +38,7 @@ const Pagination = ({ totalItems, currentPage }: PaginationProps) => {
       )}
       {generatePagination(totalPages, currentPage).map((page, index) => {
         if (typeof page === "string") {
-          // calculate where to which page the ellipses should lead based on current page
+          // calculate to which page the ellipses should lead based on current page
           let nextPage: number;
           if (currentPage <= MAX_PAGINATION_LINKS) {
             nextPage = index + 1;

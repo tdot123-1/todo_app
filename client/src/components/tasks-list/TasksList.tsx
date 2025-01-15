@@ -3,7 +3,6 @@ import { Task } from "../../types";
 import TaskListItem from "./TaskListItem";
 import { EmptyTasksList, TasksGrid } from "./TasksList.styles";
 import FetchError from "../fetch-error/FetchError";
-import Loading from "../loading/Loading";
 import { Button } from "../button/Button";
 import { ButtonContent } from "../button/Button.styles";
 import { IconClipboardPlus } from "@tabler/icons-react";
@@ -11,6 +10,8 @@ import { Link } from "react-router-dom";
 import ClearCompletedButton from "../clear-completed-tasks/ClearCompletedButton";
 import Pagination from "../pagination/Pagination";
 import { LIMIT } from "../../constants";
+import LoadingTasks from "../loading/LoadingTasks";
+import { theme } from "../../styles";
 
 interface TasksListProps {
   page: number;
@@ -21,11 +22,13 @@ const TasksList = ({ page = 1 }: TasksListProps) => {
   const [error, setError] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [totalItems, setTotalItems] = useState(0);
+  const [totalItems, setTotalItems] = useState<number | null>(null);
 
   const fetchAllTasks = async () => {
     setIsLoading(true);
     setError(false);
+
+    await new Promise((resolve) => setTimeout(resolve, 1500));
     try {
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/tasks?limit=${LIMIT}&offset=${
@@ -39,7 +42,10 @@ const TasksList = ({ page = 1 }: TasksListProps) => {
       const data = await response.json();
 
       setAllTasks(data.tasks);
-      setTotalItems(data.total_count);
+      if (totalItems === null) {
+        console.log("RECOUNT");
+        setTotalItems(data.total_count);
+      }
     } catch (error) {
       console.error("Failed to fetch tasks data: ", error);
       setError(true);
@@ -54,6 +60,7 @@ const TasksList = ({ page = 1 }: TasksListProps) => {
   }, [retryCount]);
 
   const handleRetry = () => {
+    setTotalItems(null);
     setRetryCount((prev) => prev + 1);
   };
 
@@ -69,7 +76,16 @@ const TasksList = ({ page = 1 }: TasksListProps) => {
 
   // show loading state
   if (isLoading) {
-    return <Loading />;
+    return (
+      <>
+        <ClearCompletedButton tasks={allTasks} refetch={handleRetry} />
+        <LoadingTasks />
+        <Pagination
+          currentPage={page}
+          totalItems={totalItems === null ? 0 : totalItems}
+        />
+      </>
+    );
   }
 
   return (
@@ -82,7 +98,10 @@ const TasksList = ({ page = 1 }: TasksListProps) => {
               <TaskListItem key={task.id} task={task} />
             ))}
           </TasksGrid>
-          <Pagination currentPage={page} totalItems={totalItems} />
+          <Pagination
+            currentPage={page}
+            totalItems={totalItems === null ? 0 : totalItems}
+          />
         </>
       ) : (
         <EmptyTasksList>
@@ -91,7 +110,7 @@ const TasksList = ({ page = 1 }: TasksListProps) => {
           <Link to={"/tasks/create"}>
             <Button>
               <ButtonContent>
-                <IconClipboardPlus size={20} />
+                <IconClipboardPlus size={theme.iconSizes.button} />
                 <span>Create</span>
               </ButtonContent>
             </Button>
