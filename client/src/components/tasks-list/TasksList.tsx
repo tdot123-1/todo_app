@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Task } from "../../types";
+import { QueryOptions, Task } from "../../types";
 import TaskListItem from "./TaskListItem";
 import { EmptyTasksList, TasksGrid } from "./TasksList.styles";
 import FetchError from "../fetch-error/FetchError";
@@ -12,17 +12,20 @@ import Pagination from "../pagination/Pagination";
 import { LIMIT } from "../../constants";
 import LoadingTasks from "../loading/LoadingTasks";
 import { theme } from "../../styles";
+import SortTasks from "../sort-tasks/SortTasks";
 
 interface TasksListProps {
-  page: number;
+  queryOptions: QueryOptions;
 }
 
-const TasksList = ({ page = 1 }: TasksListProps) => {
+const TasksList = ({ queryOptions }: TasksListProps) => {
   const [allTasks, setAllTasks] = useState<Task[]>([]);
   const [error, setError] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [totalItems, setTotalItems] = useState<number | null>(null);
+
+  const { page, order, sort } = queryOptions;
 
   const fetchAllTasks = async () => {
     setIsLoading(true);
@@ -33,7 +36,7 @@ const TasksList = ({ page = 1 }: TasksListProps) => {
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/tasks?limit=${LIMIT}&offset=${
           LIMIT * page - LIMIT
-        }`
+        }&order=${order}&sort_by=${sort}`
       );
       if (!response.ok) {
         throw new Error(`Response status: ${response.status}`);
@@ -67,7 +70,7 @@ const TasksList = ({ page = 1 }: TasksListProps) => {
   // refetch when page changes
   useEffect(() => {
     fetchAllTasks();
-  }, [page]);
+  }, [page, order, sort]);
 
   // show error state
   if (error) {
@@ -81,7 +84,7 @@ const TasksList = ({ page = 1 }: TasksListProps) => {
         <ClearCompletedButton tasks={allTasks} refetch={handleRetry} />
         <LoadingTasks />
         <Pagination
-          currentPage={page}
+          queryOptions={queryOptions}
           totalItems={totalItems === null ? 0 : totalItems}
         />
       </>
@@ -92,6 +95,7 @@ const TasksList = ({ page = 1 }: TasksListProps) => {
     <>
       {allTasks.length ? (
         <>
+          <SortTasks sort={sort} order={order} />
           <ClearCompletedButton tasks={allTasks} refetch={handleRetry} />
           <TasksGrid>
             {allTasks.map((task) => (
@@ -99,7 +103,7 @@ const TasksList = ({ page = 1 }: TasksListProps) => {
             ))}
           </TasksGrid>
           <Pagination
-            currentPage={page}
+            queryOptions={queryOptions}
             totalItems={totalItems === null ? 0 : totalItems}
           />
         </>

@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Query, HTTPException, Body
 from db import create_db_and_tables, SessionDep
-from models import Task, TaskCreate, TaskUpdate
+from models import Task, TaskCreate, TaskUpdate, Priority
 from typing import Annotated
 from sqlmodel import select, delete
 from uuid import UUID
@@ -8,7 +8,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 import os
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import func
+from sqlalchemy import func, case
 
 # load .env variables
 load_dotenv()
@@ -52,13 +52,23 @@ def read_all_tasks(
     
     # map sort fields to Task model attributes
     sort_field_map = {
-        "priority": Task.priority,
         "updated": Task.updated,
-        "deadline": Task.deadline
+        "deadline": Task.deadline,
+        "priority": case(
+            {
+                Priority.VERY_HIGH: 1,
+                Priority.HIGH: 2,
+                Priority.MEDIUM: 3,
+                Priority.LOW: 4,
+                Priority.VERY_LOW: 5,
+            },
+            else_=6
+        )
     }
     
     # dynamically build sorting query
     sort_field = sort_field_map.get(sort_by, Task.updated)
+    
     order_by_clause = sort_field.asc() if order == "asc" else sort_field.desc()
     
     task_query = (
@@ -71,8 +81,6 @@ def read_all_tasks(
     )
     
     tasks = task_query.all()
-    
-    # tasks = session.exec(select(Task).offset(offset).limit(limit)).all()
     
     total_count = session.exec(select(func.count(Task.id))).one()
     

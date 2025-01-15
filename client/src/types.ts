@@ -9,7 +9,7 @@ export interface Task {
   completed: boolean;
 }
 
-export const TaskPriority: { [key: number]: string} = {
+export const TaskPriority: { [key: number]: string } = {
   1: "Very High",
   2: "High",
   3: "Medium",
@@ -18,3 +18,9 @@ export const TaskPriority: { [key: number]: string} = {
 } as const;
 
 export type TaskPriorityType = keyof typeof TaskPriority;
+
+export interface QueryOptions {
+  page: number;
+  sort: "updated" | "deadline" | "priority";
+  order: "asc" | "desc";
+}

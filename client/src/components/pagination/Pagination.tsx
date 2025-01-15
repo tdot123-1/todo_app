@@ -5,59 +5,66 @@ import { LIMIT, MAX_PAGINATION_LINKS } from "../../constants";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import { theme } from "../../styles";
 import { generatePagination } from "../../utils";
+import { QueryOptions } from "../../types";
 
 interface PaginationProps {
   totalItems: number;
-  currentPage: number;
+  queryOptions: QueryOptions;
 }
 
-const Pagination = ({ totalItems, currentPage }: PaginationProps) => {
+const Pagination = ({ totalItems, queryOptions }: PaginationProps) => {
   const [totalPages, setTotalPages] = useState(0);
   //   const [pages, setPages] = useState<(number | string)[]>([]);
+
+  const { page, order, sort } = queryOptions;
 
   useEffect(() => {
     setTotalPages(Math.ceil(totalItems / LIMIT));
   }, [totalItems]);
 
   // useEffect(() => {
-  //   setPages(generatePagination(totalPages, currentPage));
-  // }, [currentPage]);
+  //   setPages(generatePagination(totalPages, page));
+  // }, [page]);
 
   return (
     <Wrapper>
       {totalPages >= 1 && (
         <Link
           to={`/tasks?page=${
-            currentPage - 1 >= 1 ? currentPage - 1 : currentPage
-          }`}
+            page - 1 >= 1 ? page - 1 : page
+          }&sort=${sort}&order=${order}`}
         >
-          <PaginationLink $active={false} $disabled={!(currentPage - 1 >= 1)}>
+          <PaginationLink $active={false} $disabled={!(page - 1 >= 1)}>
             <IconChevronLeft size={theme.iconSizes.button} />
           </PaginationLink>
         </Link>
       )}
-      {generatePagination(totalPages, currentPage).map((page, index) => {
-        if (typeof page === "string") {
+      {generatePagination(totalPages, page).map((p, index) => {
+        if (typeof p === "string") {
           // calculate to which page the ellipses should lead based on current page
           let nextPage: number;
-          if (currentPage <= MAX_PAGINATION_LINKS) {
+          if (page <= MAX_PAGINATION_LINKS) {
             nextPage = index + 1;
-          } else if (currentPage > totalPages - MAX_PAGINATION_LINKS) {
+          } else if (page > totalPages - MAX_PAGINATION_LINKS) {
             nextPage = totalPages - MAX_PAGINATION_LINKS;
           } else {
-            nextPage = currentPage + 2;
+            nextPage = page + 2;
           }
           return (
-            <Link to={`/tasks?page=${nextPage}`} key={`${page}-${index}`}>
-              <PaginationLink $active={false}>{page}</PaginationLink>
+            <Link
+              to={`/tasks?page=${nextPage}&sort=${sort}&order=${order}`}
+              key={`${p}-${index}`}
+            >
+              <PaginationLink $active={false}>{p}</PaginationLink>
             </Link>
           );
         } else {
           return (
-            <Link key={`${page}-${index}`} to={`/tasks?page=${page}`}>
-              <PaginationLink $active={currentPage === page}>
-                {page}
-              </PaginationLink>
+            <Link
+              key={`${p}-${index}`}
+              to={`/tasks?page=${p}&sort=${sort}&order=${order}`}
+            >
+              <PaginationLink $active={page === p}>{p}</PaginationLink>
             </Link>
           );
         }
@@ -65,13 +72,10 @@ const Pagination = ({ totalItems, currentPage }: PaginationProps) => {
       {totalPages >= 1 && (
         <Link
           to={`/tasks?page=${
-            currentPage + 1 <= totalPages ? currentPage + 1 : currentPage
-          }`}
+            page + 1 <= totalPages ? page + 1 : page
+          }&sort=${sort}&order=${order}`}
         >
-          <PaginationLink
-            $active={false}
-            $disabled={!(currentPage + 1 <= totalPages)}
-          >
+          <PaginationLink $active={false} $disabled={!(page + 1 <= totalPages)}>
             <IconChevronRight size={theme.iconSizes.button} />
           </PaginationLink>
         </Link>
