@@ -10,7 +10,7 @@ class UserBase(SQLModel):
 
 class User(UserBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
-    hashed_password = str
+    hashed_password: str
     
 
 # base model with all fields shared across other models
