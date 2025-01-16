@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import { QueryOptions, Task } from "../../types";
 import TaskListItem from "./TaskListItem";
-import { EmptyTasksList, TasksGrid } from "./TasksList.styles";
+import { EmptyTasksList, TasksGrid, ToolbarWrapper } from "./TasksList.styles";
 import FetchError from "../fetch-error/FetchError";
 import { Button } from "../button/Button";
 import { ButtonContent } from "../button/Button.styles";
-import { IconClipboardPlus } from "@tabler/icons-react";
+import {
+  IconClipboardPlus,
+  IconSettingsDown,
+  IconSettingsUp,
+} from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import ClearCompletedButton from "../clear-completed-tasks/ClearCompletedButton";
 import Pagination from "../pagination/Pagination";
@@ -24,6 +28,7 @@ const TasksList = ({ queryOptions }: TasksListProps) => {
   const [retryCount, setRetryCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [totalItems, setTotalItems] = useState<number | null>(null);
+  const [displayTools, setDisplayTools] = useState(false);
 
   const { page, order, sort } = queryOptions;
 
@@ -71,6 +76,10 @@ const TasksList = ({ queryOptions }: TasksListProps) => {
     fetchAllTasks();
   }, [page, order, sort]);
 
+  const handleDisplayTools = () => {
+    setDisplayTools((prev) => !prev);
+  };
+
   // show error state
   if (error) {
     return <FetchError handleRetry={handleRetry} />;
@@ -80,7 +89,22 @@ const TasksList = ({ queryOptions }: TasksListProps) => {
   if (isLoading) {
     return (
       <>
-        <ClearCompletedButton tasks={allTasks} refetch={handleRetry} />
+        <div style={{ width: "fit-content", marginBottom: "0.2rem" }}>
+          <Button onClick={handleDisplayTools}>
+            {displayTools ? (
+              <IconSettingsUp size={theme.iconSizes.button} />
+            ) : (
+              <IconSettingsDown size={theme.iconSizes.button} />
+            )}
+          </Button>
+        </div>
+
+        {displayTools && (
+          <ToolbarWrapper>
+            <SortTasks sort={sort} order={order} />
+            <ClearCompletedButton tasks={allTasks} refetch={handleRetry} />
+          </ToolbarWrapper>
+        )}
         <LoadingTasks />
         <Pagination
           queryOptions={queryOptions}
@@ -94,8 +118,23 @@ const TasksList = ({ queryOptions }: TasksListProps) => {
     <>
       {allTasks.length ? (
         <>
-          <SortTasks sort={sort} order={order} />
-          <ClearCompletedButton tasks={allTasks} refetch={handleRetry} />
+          <div style={{ width: "fit-content", marginBottom: "0.2rem" }}>
+            <Button onClick={handleDisplayTools}>
+              {displayTools ? (
+                <IconSettingsUp size={theme.iconSizes.button} />
+              ) : (
+                <IconSettingsDown size={theme.iconSizes.button} />
+              )}
+            </Button>
+          </div>
+
+          {displayTools && (
+            <ToolbarWrapper>
+              <SortTasks sort={sort} order={order} />
+              <ClearCompletedButton tasks={allTasks} refetch={handleRetry} />
+            </ToolbarWrapper>
+          )}
+
           <TasksGrid>
             {allTasks.map((task) => (
               <TaskListItem key={task.id} task={task} />

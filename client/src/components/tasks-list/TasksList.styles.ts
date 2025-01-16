@@ -38,3 +38,9 @@ export const EmptyTasksList = styled.div`
   align-items: center;
   gap: 1rem;
 `;
+
+export const ToolbarWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+`;

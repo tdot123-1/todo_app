@@ -1,5 +1,10 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { Container, Label, Select } from "./SortTasks.styles";
+import { Button } from "../button/Button";
+import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
+import { theme } from "../../styles";
+import { ButtonContent } from "../button/Button.styles";
 
 interface SortTasksProps {
   sort: "updated" | "deadline" | "priority";
@@ -7,7 +12,6 @@ interface SortTasksProps {
 }
 
 const SortTasks = ({ sort, order }: SortTasksProps) => {
-
   const [sortBy, setSortBy] = useState(sort);
   const [orderBy, setOrderBy] = useState(order);
   const [_, setSearchParams] = useSearchParams();
@@ -40,25 +44,34 @@ const SortTasks = ({ sort, order }: SortTasksProps) => {
     updateParams(sortBy, newOrder);
   };
 
-
   // temporary component to test sort function
   return (
     <>
       <div>
-        <select
-          name="sortBy"
-          onChange={(v) => handleSortChange(v.target.value)}
-          value={sortBy}
-        >
-          {orderOptions.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-        <button onClick={handleClick}>
-          {orderBy === "asc" ? "desc" : "asc"}
-        </button>
+        <Label>Sort</Label>
+        <Container>
+          <Select
+            name="sortBy"
+            onChange={(v) => handleSortChange(v.target.value)}
+            value={sortBy}
+          >
+            {orderOptions.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </Select>
+          <Button onClick={handleClick}>
+            <ButtonContent>
+              {orderBy === "asc" ? (
+                <IconChevronDown size={theme.iconSizes.button} />
+              ) : (
+                <IconChevronUp size={theme.iconSizes.button} />
+              )}
+              <span>Order</span>
+            </ButtonContent>
+          </Button>
+        </Container>
       </div>
     </>
   );
