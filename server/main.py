@@ -5,22 +5,18 @@ from typing import Annotated
 from sqlmodel import select, delete
 from uuid import UUID
 from datetime import datetime
-from dotenv import load_dotenv
-import os
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import func
+from auth import AuthDep
+from config import CLIENT_URL
 
-# load .env variables
-load_dotenv()
 
 # create app instance
 app = FastAPI()
 
-# get client URL from env
-client_url = os.getenv("CLIENT_URL")
-
+# set middlewares
 origins = [
-    client_url,
+    CLIENT_URL,
 ]
 
 app.add_middleware(
@@ -31,6 +27,7 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+
 @app.on_event("startup")
 def on_startup():
     create_db_and_tables()
@@ -40,7 +37,22 @@ def on_startup():
 async def root():
     return {"message": "Hello World"}
 
+# test
+@app.get("/items/")
+async def read_items(token: AuthDep):
+    return {"token": token}
 
+
+# users
+
+# signup
+
+# login
+
+# logout
+
+
+# tasks
 @app.get("/tasks")
 def read_all_tasks(
     session: SessionDep,

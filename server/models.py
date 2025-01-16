@@ -2,6 +2,17 @@ from datetime import datetime
 from sqlmodel import SQLModel, Field
 import uuid
 
+# user model
+class UserBase(SQLModel):
+    username: str = Field(max_length=25, unique=True, index=True)
+    email: str
+    
+
+class User(UserBase, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
+    hashed_password = str
+    
+
 # base model with all fields shared across other models
 class TaskBase(SQLModel):
     title: str

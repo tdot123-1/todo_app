@@ -2,13 +2,11 @@ from typing import Annotated
 from sqlmodel import create_engine, SQLModel, Session
 from fastapi import Depends
 from models import Task
+from config import DB_URL
 
 # create db engine
-sqlite_file_name = "todo_app.db"
-sqlite_url = f"sqlite:///{sqlite_file_name}"
-
 connect_args = {"check_same_thread": False}
-engine = create_engine(sqlite_url, connect_args=connect_args)
+engine = create_engine(DB_URL, connect_args=connect_args)
 
 # create tables
 def create_db_and_tables():
