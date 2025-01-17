@@ -104,7 +104,7 @@ async def login_for_access_token(form_data: PasswordDep, session: SessionDep) ->
     # set expiry time, generate token
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRES)
     access_token = create_access_token(
-        data={"sub": user.id, "name": user.username}, expires_delta=access_token_expires
+        data={"sub": str(user.id), "name": user.username}, expires_delta=access_token_expires
     )
     return Token(access_token=access_token, token_type="bearer")
 
