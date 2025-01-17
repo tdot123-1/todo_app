@@ -1,22 +1,28 @@
 from datetime import datetime
 from sqlmodel import SQLModel, Field
 import uuid
+from pydantic import EmailStr
+
 
 # user model
 class UserBase(SQLModel):
     username: str = Field(max_length=25, unique=True, index=True)
-    email: str
-    
+    email: EmailStr
+
+
+class UserSignup(UserBase):
+    password: str
+
 
 class User(UserBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
     hashed_password: str
-    
+
 
 # base model with all fields shared across other models
 class TaskBase(SQLModel):
     title: str
-    description: str 
+    description: str
     priority: int | None = Field(default=5, le=5, ge=1, index=True)
     deadline: datetime | None = Field(default=None, index=True)
     completed: bool = Field(default=False)
@@ -27,7 +33,7 @@ class Task(TaskBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
     created: datetime = Field(default_factory=datetime.now)
     updated: datetime = Field(default_factory=datetime.now, index=True)
-    
+
 
 # create task (has only base model fields)
 class TaskCreate(TaskBase):

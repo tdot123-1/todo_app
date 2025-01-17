@@ -18,13 +18,14 @@ AuthDep = Annotated[str, Depends(oauth2_scheme)]
 
 PasswordDep = Annotated[OAuth2PasswordRequestForm, Depends()]
 
-ACCESS_TOKEN_EXPIRES=30
+ACCESS_TOKEN_EXPIRES = 30
+
 
 # token class
 class Token(BaseModel):
     access_token: str
     token_type: str
-    
+
 
 class TokenData(BaseModel):
     username: str | None = None
@@ -37,6 +38,7 @@ class TokenData(BaseModel):
 # verify password
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
@@ -47,16 +49,14 @@ def get_password_hash(password):
 
 def authenticate_user(session: SessionDep, username: str, password: str):
     # find user by username
-    user = session.exec(
-        select(User)
-        .where(User.username == username)
-    ).one_or_none()
+    user = session.exec(select(User).where(User.username == username)).one_or_none()
     if not user:
         return False
     # verify password hash
     if not verify_password(password, user.hashed_password):
         return False
     return user
+
 
 # get user
 # authenticate user
@@ -78,7 +78,7 @@ async def get_current_user(token: AuthDep, session: SessionDep):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"}
+        headers={"WWW-Authenticate": "Bearer"},
     )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -90,6 +90,6 @@ async def get_current_user(token: AuthDep, session: SessionDep):
     except InvalidTokenError:
         raise credentials_exception
     user = session.get(User, user_id)
-    if user is None: 
+    if user is None:
         raise credentials_exception
     return user

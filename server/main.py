@@ -1,13 +1,21 @@
 from fastapi import FastAPI, Query, HTTPException, status
 from db import create_db_and_tables, SessionDep
-from models import Task, TaskCreate, TaskUpdate, User
+from models import Task, TaskCreate, TaskUpdate, User, UserSignup
 from typing import Annotated
 from sqlmodel import select, delete
 from uuid import UUID
 from datetime import datetime, timedelta
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import func
-from auth import AuthDep, Token, PasswordDep, ACCESS_TOKEN_EXPIRES, create_access_token, authenticate_user
+from auth import (
+    AuthDep,
+    Token,
+    PasswordDep,
+    ACCESS_TOKEN_EXPIRES,
+    create_access_token,
+    authenticate_user,
+    get_password_hash,
+)
 from config import CLIENT_URL
 
 
@@ -24,7 +32,7 @@ app.add_middleware(
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"]
+    allow_headers=["*"],
 )
 
 
@@ -37,6 +45,7 @@ def on_startup():
 async def root():
     return {"message": "Hello World"}
 
+
 # test
 @app.get("/items/")
 async def read_items(token: AuthDep):
@@ -45,32 +54,60 @@ async def read_items(token: AuthDep):
 
 # users
 
+
 # signup
+@app.post("/signup")
+async def signup(
+    user_data: UserSignup,
+    session: SessionDep,
+):
+    # check if username exists
+    existing_user = session.exec(
+        select(User).where(User.username == user_data.username)
+    ).one_or_none()
+
+    if existing_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Username already taken"
+        )
+
+    # hash password, add new user to db
+    hashed_password = get_password_hash(user_data.password)
+
+    new_user = User(
+        username=user_data.username,
+        email=user_data.email,
+        hashed_password=hashed_password,
+    )
+
+    session.add(new_user)
+    session.commit()
+    session.refresh(new_user)
+
+    return {"message": "User created succesfully."}
+
 
 # login
 @app.post("/token")
-async def login_for_access_token(
-    form_data: PasswordDep,
-    session: SessionDep
-) -> Token:
-    
+async def login_for_access_token(form_data: PasswordDep, session: SessionDep) -> Token:
+
     # find user by username
     user = authenticate_user(session, form_data.username, form_data.password)
-    
+
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-        
+
     # set expiry time, generate token
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRES)
     access_token = create_access_token(
         data={"sub": user.id, "name": user.username}, expires_delta=access_token_expires
     )
     return Token(access_token=access_token, token_type="bearer")
-        
+
 
 # logout
 
@@ -82,34 +119,29 @@ def read_all_tasks(
     offset: int = 0,
     limit: Annotated[int, Query(le=100)] = 100,
     sort_by: str = Query(default="updated", regex="^(priority|updated|deadline)$"),
-    order: str = Query(default="desc", regex="^(asc|desc)$")
+    order: str = Query(default="desc", regex="^(asc|desc)$"),
 ) -> dict:
-    
+
     # map sort fields to Task model attributes
     sort_field_map = {
         "updated": Task.updated,
         "deadline": Task.deadline,
-        "priority": Task.priority
+        "priority": Task.priority,
     }
-    
+
     # dynamically build sorting query
     sort_field = sort_field_map.get(sort_by, Task.updated)
-    
+
     order_by_clause = sort_field.asc() if order == "asc" else sort_field.desc()
-    
-    task_query = (
-        session.exec(
-            select(Task)
-            .order_by(order_by_clause)
-            .offset(offset)
-            .limit(limit)
-        )
+
+    task_query = session.exec(
+        select(Task).order_by(order_by_clause).offset(offset).limit(limit)
     )
-    
+
     tasks = task_query.all()
-    
+
     total_count = session.exec(select(func.count(Task.id))).one()
-    
+
     return {"tasks": tasks, "total_count": total_count}
 
 
@@ -120,10 +152,7 @@ def read_tasks_count(session: SessionDep) -> dict:
 
 
 @app.get("/tasks/{task_id}")
-def read_one_task(
-    task_id: UUID,
-    session: SessionDep
-) -> Task:
+def read_one_task(task_id: UUID, session: SessionDep) -> Task:
     task = session.get(Task, task_id)
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
@@ -136,7 +165,7 @@ def create_task(task: TaskCreate, session: SessionDep) -> Task:
         title=task.title,
         description=task.description,
         priority=task.priority,
-        deadline=task.deadline
+        deadline=task.deadline,
     )
     session.add(new_task)
     session.commit()
@@ -149,16 +178,16 @@ def update_task(task_id: UUID, taskUpdate: TaskUpdate, session: SessionDep):
     task_db = session.get(Task, task_id)
     if not task_db:
         raise HTTPException(status_code=404, detail="Task not found")
-    
+
     # convert model into dict, include only provided fields
     task_data = taskUpdate.model_dump(exclude_unset=True)
-    
+
     # manually set updated timestamp
     task_data["updated"] = datetime.now()
-    
+
     # update existing db object woth values from dict
     task_db.sqlmodel_update(task_data)
-    
+
     # save updated task
     session.add(task_db)
     session.commit()
@@ -176,7 +205,7 @@ def bulk_delete_tasks(task_ids: list[UUID], session: SessionDep):
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
-    
+
 
 @app.delete("/tasks/{task_id}")
 def delete_task(task_id: UUID, session: SessionDep):
