@@ -1,13 +1,13 @@
-from fastapi import FastAPI, Query, HTTPException
+from fastapi import FastAPI, Query, HTTPException, status
 from db import create_db_and_tables, SessionDep
-from models import Task, TaskCreate, TaskUpdate
+from models import Task, TaskCreate, TaskUpdate, User
 from typing import Annotated
 from sqlmodel import select, delete
 from uuid import UUID
-from datetime import datetime
+from datetime import datetime, timedelta
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import func
-from auth import AuthDep
+from auth import AuthDep, Token, PasswordDep, ACCESS_TOKEN_EXPIRES, create_access_token, authenticate_user
 from config import CLIENT_URL
 
 
@@ -48,6 +48,29 @@ async def read_items(token: AuthDep):
 # signup
 
 # login
+@app.post("/token")
+async def login_for_access_token(
+    form_data: PasswordDep,
+    session: SessionDep
+) -> Token:
+    
+    # find user by username
+    user = authenticate_user(session, form_data.username, form_data.password)
+    
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+        
+    # set expiry time, generate token
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRES)
+    access_token = create_access_token(
+        data={"sub": user.id, "name": user.username}, expires_delta=access_token_expires
+    )
+    return Token(access_token=access_token, token_type="bearer")
+        
 
 # logout
 
