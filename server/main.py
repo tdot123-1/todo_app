@@ -132,6 +132,7 @@ async def login_for_access_token(form_data: PasswordDep, session: SessionDep) ->
 
 
 # tasks
+## change to only retrieve tasks assosciated with current user
 @app.get("/tasks")
 def read_all_tasks(
     session: SessionDep,

@@ -3,6 +3,7 @@ from sqlmodel import SQLModel, Field
 import uuid
 from pydantic import EmailStr
 
+# add foreign key relationship between user and task
 
 # user model
 class UserBase(SQLModel):
