@@ -52,6 +52,14 @@ export const SelectOption = styled.option`
   width: full;
 `;
 
+export const ErrorText = styled.p`
+  text-align: center;
+  color: ${(props) => props.theme.dangerColor};
+  font-style: italic;
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+`;
+
 export const FormWrapper = styled.div`
   margin: 2rem auto;
   width: full;

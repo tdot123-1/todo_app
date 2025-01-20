@@ -29,7 +29,7 @@ const SessionContextProvider: React.FC<{ children: ReactNode }> = ({
   useEffect(() => {
     const localToken = window.localStorage.getItem("token");
     if (localToken) {
-      setToken(localToken)
+      setToken(localToken);
       setIsAuthenticated(true);
     }
   }, []);
@@ -41,6 +41,7 @@ const SessionContextProvider: React.FC<{ children: ReactNode }> = ({
   const handleLogout = () => {
     removeToken();
     setToken(null);
+    setIsAuthenticated(false);
   };
 
   // use effect to set token in storage

@@ -77,6 +77,18 @@ async def signup(
             detail="Password confirmation failed",
         )
 
+    if len(user_data.username) < 3 or len(user_data.username) > 25:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username must be between 3 and 25 characters.",
+        )
+
+    if len(user_data.password) < 5 or len(user_data.password) > 25:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Password must be between 3 and 25 characters.",
+        )
+
     # hash password, add new user to db
     hashed_password = get_password_hash(user_data.password)
 
