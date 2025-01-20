@@ -7,7 +7,7 @@ const LoginForm = () => {
   const session = useContext(SessionContext);
 
   if (!session) {
-    return <p>Error loading session</p>;
+    throw new Error("Failed to load session");
   }
 
   const { setToken } = session;
@@ -29,18 +29,22 @@ const LoginForm = () => {
       });
 
       if (!response.ok) {
+        // log errors
+
         const errorData = await response.json();
         console.error("error data: ", errorData);
         console.error("Error logging in: ", response.status);
+
+        // if expected error: display error text
         if (errorData.detail && typeof errorData.detail === "string") {
           setLoginError(errorData.detail);
         } else {
           throw new Error("Unexpected error occured");
         }
-        // throw new Error(`Error signing up: ${response.status}`);
       } else {
         const data = await response.json();
 
+        // set access token in session context
         if (data.access_token) {
           console.log(data.access_token);
           setToken(data.access_token);

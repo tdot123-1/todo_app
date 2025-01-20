@@ -38,15 +38,12 @@ const SessionContextProvider: React.FC<{ children: ReactNode }> = ({
     window.localStorage.removeItem("token");
   };
 
+  // on log out, remove token and local token
   const handleLogout = () => {
     removeToken();
     setToken(null);
     setIsAuthenticated(false);
   };
-
-  // use effect to set token in storage
-  // function to fetch with token
-  // handle logout
 
   return (
     <SessionContext.Provider

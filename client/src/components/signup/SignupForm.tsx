@@ -20,15 +20,18 @@ const SignupForm = () => {
       });
 
       if (!response.ok) {
+        // log error code
         console.error("Error signing up: ", response.status);
+
         const errorData = await response.json();
         console.error("error data: ", errorData);
+
+        // in case of error caught: display error detail
         if (errorData.detail && typeof errorData.detail === "string") {
           setSignupError(errorData.detail);
         } else {
             throw new Error("Unexpected error occured")
         }
-        // throw new Error(`Error signing up: ${response.status}`);
       } else {
         const data = await response.json();
 
