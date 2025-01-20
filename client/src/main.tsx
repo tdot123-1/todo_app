@@ -5,15 +5,17 @@ import App from "./App.tsx";
 import { ThemeProvider } from "styled-components";
 import { GlobalStyle, theme } from "./styles.ts";
 import { BrowserRouter } from "react-router-dom";
-
+import SessionContextProvider from "./contexts/SessionContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
-      <ThemeProvider theme={theme}>
-        <GlobalStyle />
-        <App />
-      </ThemeProvider>
+      <SessionContextProvider>
+        <ThemeProvider theme={theme}>
+          <GlobalStyle />
+          <App />
+        </ThemeProvider>
+      </SessionContextProvider>
     </BrowserRouter>
   </StrictMode>
 );

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Query, HTTPException, status
+from fastapi import FastAPI, Query, HTTPException, status, Form
 from db import create_db_and_tables, SessionDep
 from models import Task, TaskCreate, TaskUpdate, User, UserSignup
 from typing import Annotated
@@ -49,7 +49,7 @@ async def root():
 # test
 @app.get("/items/")
 async def read_items(token: AuthDep):
-    return {"token": token}
+    return {"message": "authorized"}
 
 
 # users
@@ -58,7 +58,7 @@ async def read_items(token: AuthDep):
 # signup
 @app.post("/signup")
 async def signup(
-    user_data: UserSignup,
+    user_data: Annotated[UserSignup, Form()],
     session: SessionDep,
 ):
     # check if username exists
@@ -104,7 +104,8 @@ async def login_for_access_token(form_data: PasswordDep, session: SessionDep) ->
     # set expiry time, generate token
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRES)
     access_token = create_access_token(
-        data={"sub": str(user.id), "name": user.username}, expires_delta=access_token_expires
+        data={"sub": str(user.id), "name": user.username},
+        expires_delta=access_token_expires,
     )
     return Token(access_token=access_token, token_type="bearer")
 
