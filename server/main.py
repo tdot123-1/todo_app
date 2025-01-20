@@ -71,6 +71,12 @@ async def signup(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Username already taken"
         )
 
+    if user_data.password != user_data.confirm_password:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Password confirmation failed",
+        )
+
     # hash password, add new user to db
     hashed_password = get_password_hash(user_data.password)
 

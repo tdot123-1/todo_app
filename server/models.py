@@ -12,6 +12,7 @@ class UserBase(SQLModel):
 
 class UserSignup(UserBase):
     password: str
+    confirm_password: str
 
 
 class User(UserBase, table=True):
