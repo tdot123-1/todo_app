@@ -87,7 +87,7 @@ def signup(
     if len(user_data.password) < 5 or len(user_data.password) > 25:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Password must be between 3 and 25 characters.",
+            detail="Password must be between 5 and 25 characters.",
         )
 
     # hash password, add new user to db

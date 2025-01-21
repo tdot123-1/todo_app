@@ -10,6 +10,7 @@ from config import SECRET_KEY, ALGORITHM
 from db import SessionDep
 from models import User
 from sqlmodel import select
+from uuid import UUID
 
 # OAuth dependency
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -29,7 +30,7 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     username: str | None = None
-    user_id: str | None = None
+    user_id: UUID | None = None
 
 
 # get current user
@@ -86,6 +87,8 @@ def get_current_user(token: AuthDep, session: SessionDep):
         username: str = payload.get("name")
         if not user_id or not username:
             raise credentials_exception
+        
+        user_id = UUID(user_id)
         token_data = TokenData(username=username, user_id=user_id)
     except InvalidTokenError:
         raise credentials_exception
