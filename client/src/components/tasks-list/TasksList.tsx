@@ -43,35 +43,6 @@ const TasksList = ({ queryOptions }: TasksListProps) => {
 
   const { page, order, sort } = queryOptions;
 
-  // const fetchAllTasks = async () => {
-  //   setIsLoading(true);
-  //   setError(false);
-
-  //   // await new Promise((resolve) => setTimeout(resolve, 1500));
-  //   try {
-  //     const response = await fetch(
-  //       `${import.meta.env.VITE_API_URL}/tasks?limit=${LIMIT}&offset=${
-  //         LIMIT * page - LIMIT
-  //       }&order=${order}&sort_by=${sort}`
-  //     );
-  //     if (!response.ok) {
-  //       throw new Error(`Response status: ${response.status}`);
-  //     }
-
-  //     const data = await response.json();
-
-  //     setAllTasks(data.tasks);
-  //     if (totalItems === null) {
-  //       setTotalItems(data.total_count);
-  //     }
-  //   } catch (error) {
-  //     console.error("Failed to fetch tasks data: ", error);
-  //     setError(true);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
   const fetchAllTasks = async () => {
     setIsLoading(true);
     setError(false);
@@ -88,6 +59,7 @@ const TasksList = ({ queryOptions }: TasksListProps) => {
 
       if (!data.success || !data.data) {
         if (data.status === 401) {
+          console.error("Unauthorized: ", data.status);
           handleLogout();
           return navigate("/login");
         }

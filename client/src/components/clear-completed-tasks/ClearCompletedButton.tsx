@@ -10,7 +10,11 @@ interface ClearCompletedButtonProps {
   refetch: () => void;
 }
 
-const ClearCompletedButton = ({ tasks, refetch }: ClearCompletedButtonProps) => {
+//(!) update to use fetch with token /////////////////
+const ClearCompletedButton = ({
+  tasks,
+  refetch,
+}: ClearCompletedButtonProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -47,7 +51,7 @@ const ClearCompletedButton = ({ tasks, refetch }: ClearCompletedButtonProps) => 
       if (response.ok) {
         console.log("Tasks deleted");
         // refetch the list of tasks after deletion
-        refetch()
+        refetch();
       } else {
         throw new Error(`Error deleting tasks: ${response.status}`);
       }

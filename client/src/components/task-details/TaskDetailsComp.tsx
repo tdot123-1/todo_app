@@ -16,12 +16,14 @@ import FinishTaskButton from "../finish-task/FinishTaskButton";
 import { theme } from "../../styles";
 import { CheckBoxWrapper } from "../tasks-list/TaskListItem.styles";
 import { SessionContext } from "../../contexts/SessionContext";
+import EditForm from "../edit-task/EditForm";
 
 interface TaskDetailsCompProps {
   taskId: string;
+  edit?: boolean;
 }
 
-const TaskDetailsComp = ({ taskId }: TaskDetailsCompProps) => {
+const TaskDetailsComp = ({ taskId, edit }: TaskDetailsCompProps) => {
   const session = useContext(SessionContext);
 
   if (!session) {
@@ -36,28 +38,6 @@ const TaskDetailsComp = ({ taskId }: TaskDetailsCompProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
-
-  // const fetchTask = async () => {
-  //   setError(false);
-  //   try {
-  //     const response = await fetch(
-  //       `${import.meta.env.VITE_API_URL}/tasks/${taskId}`
-  //     );
-
-  //     if (!response.ok) {
-  //       if (response.status === 404) {
-  //         return navigate("/task-not-found");
-  //       }
-  //       throw new Error(`Response status: ${response.status}`);
-  //     }
-
-  //     const data: Task = await response.json();
-  //     setTaskData(data);
-  //   } catch (error: any) {
-  //     setError(true);
-  //     console.error("Failed to fetch task: ", error);
-  //   }
-  // };
 
   const fetchTask = async () => {
     setError(false);
@@ -74,9 +54,11 @@ const TaskDetailsComp = ({ taskId }: TaskDetailsCompProps) => {
         if (data.status === 404) {
           return navigate("/task-not-found");
         } else if (data.status === 401) {
+          console.error("Unauthorized: ", data.status);
           handleLogout();
           return navigate("/login");
         }
+        throw new Error(`Error fetching task: ${data.status}`);
       }
 
       // check if correct data type
@@ -89,7 +71,7 @@ const TaskDetailsComp = ({ taskId }: TaskDetailsCompProps) => {
       setError(true);
       console.error("Failed to fetch task: ", error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   };
 
@@ -115,6 +97,10 @@ const TaskDetailsComp = ({ taskId }: TaskDetailsCompProps) => {
         <FetchError handleRetry={handleRetry} />
       </>
     );
+  }
+
+  if (edit) {
+    return <>{taskData ? <EditForm task={taskData} /> : <Loading />}</>;
   }
 
   return (

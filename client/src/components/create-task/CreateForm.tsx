@@ -35,22 +35,11 @@ const CreateForm = () => {
     console.log("Task Submitted: ", task);
 
     try {
-      // const response = await fetch(`${import.meta.env.VITE_API_URL}/tasks/`, {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(task),
-      // });
-      // if (response.ok) {
-      //   console.log("Success");
-      //   navigate("/tasks", { replace: true });
-      // } else {
-      //   console.error(`Error creating task: ${response.status}`);
-      // }
-
       const data: FetchedData = await fetchWithToken(endpoint, "POST", task);
 
       if (!data.success || !data.data) {
         if (data.status === 401) {
+          console.error("Unauthorized: ", data.status);
           handleLogout();
           return navigate("/login");
         }
