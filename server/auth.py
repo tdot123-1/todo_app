@@ -74,7 +74,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     return encoded_jwt
 
 
-async def get_current_user(token: AuthDep, session: SessionDep):
+def get_current_user(token: AuthDep, session: SessionDep):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -84,12 +84,12 @@ async def get_current_user(token: AuthDep, session: SessionDep):
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user_id: str = payload.get("sub")
         username: str = payload.get("name")
-        if not user or not username:
+        if not user_id or not username:
             raise credentials_exception
         token_data = TokenData(username=username, user_id=user_id)
     except InvalidTokenError:
         raise credentials_exception
-    user = session.get(User, user_id)
+    user = session.get(User, token_data.user_id)
     if user is None:
         raise credentials_exception
     return user

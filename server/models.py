@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, Relationship
 import uuid
 from pydantic import EmailStr
 
@@ -19,6 +19,7 @@ class UserSignup(UserBase):
 class User(UserBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
     hashed_password: str
+    tasks: list["Task"] = Relationship(back_populates="user")
 
 
 # base model with all fields shared across other models
@@ -35,6 +36,8 @@ class Task(TaskBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
     created: datetime = Field(default_factory=datetime.now)
     updated: datetime = Field(default_factory=datetime.now, index=True)
+    user_id: uuid.UUID = Field(foreign_key="user.id")
+    user: User = Relationship(back_populates="tasks")
 
 
 # create task (has only base model fields)

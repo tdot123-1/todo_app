@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Query, HTTPException, status, Form
+from fastapi import FastAPI, Query, HTTPException, status, Form, Depends
 from db import create_db_and_tables, SessionDep
 from models import Task, TaskCreate, TaskUpdate, User, UserSignup
 from typing import Annotated
@@ -15,6 +15,7 @@ from auth import (
     create_access_token,
     authenticate_user,
     get_password_hash,
+    get_current_user,
 )
 from config import CLIENT_URL
 
@@ -42,7 +43,7 @@ def on_startup():
 
 
 @app.get("/")
-async def root():
+def root():
     return {"message": "Hello World"}
 
 
@@ -57,7 +58,7 @@ async def read_items(token: AuthDep):
 
 # signup
 @app.post("/signup")
-async def signup(
+def signup(
     user_data: Annotated[UserSignup, Form()],
     session: SessionDep,
 ):
@@ -107,7 +108,7 @@ async def signup(
 
 # login
 @app.post("/token")
-async def login_for_access_token(form_data: PasswordDep, session: SessionDep) -> Token:
+def login_for_access_token(form_data: PasswordDep, session: SessionDep) -> Token:
 
     # find user by username
     user = authenticate_user(session, form_data.username, form_data.password)
@@ -136,6 +137,7 @@ async def login_for_access_token(form_data: PasswordDep, session: SessionDep) ->
 @app.get("/tasks")
 def read_all_tasks(
     session: SessionDep,
+    current_user: User = Depends(get_current_user),
     offset: int = 0,
     limit: Annotated[int, Query(le=100)] = 100,
     sort_by: str = Query(default="updated", regex="^(priority|updated|deadline)$"),
@@ -155,12 +157,18 @@ def read_all_tasks(
     order_by_clause = sort_field.asc() if order == "asc" else sort_field.desc()
 
     task_query = session.exec(
-        select(Task).order_by(order_by_clause).offset(offset).limit(limit)
+        select(Task)
+        .where(Task.user_id == current_user.id)
+        .order_by(order_by_clause)
+        .offset(offset)
+        .limit(limit)
     )
 
     tasks = task_query.all()
 
-    total_count = session.exec(select(func.count(Task.id))).one()
+    total_count = session.exec(
+        select(func.count(Task.id)).where(Task.user_id == current_user.id)
+    ).one()
 
     return {"tasks": tasks, "total_count": total_count}
 
@@ -172,20 +180,32 @@ def read_tasks_count(session: SessionDep) -> dict:
 
 
 @app.get("/tasks/{task_id}")
-def read_one_task(task_id: UUID, session: SessionDep) -> Task:
-    task = session.get(Task, task_id)
+def read_one_task(
+    task_id: UUID, session: SessionDep, current_user: User = Depends(get_current_user)
+) -> Task:
+    # task = session.get(Task, task_id)
+
+    task = session.exec(
+        select(Task).where(Task.id == task_id, Task.user_id == current_user.id)
+    ).one_or_none()
+
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
     return task
 
 
 @app.post("/tasks")
-def create_task(task: TaskCreate, session: SessionDep) -> Task:
+def create_task(
+    task: TaskCreate,
+    session: SessionDep,
+    current_user: User = Depends(get_current_user),
+) -> Task:
     new_task = Task(
         title=task.title,
         description=task.description,
         priority=task.priority,
         deadline=task.deadline,
+        user_id=current_user.id,
     )
     session.add(new_task)
     session.commit()
@@ -194,8 +214,16 @@ def create_task(task: TaskCreate, session: SessionDep) -> Task:
 
 
 @app.patch("/tasks/{task_id}")
-def update_task(task_id: UUID, taskUpdate: TaskUpdate, session: SessionDep):
-    task_db = session.get(Task, task_id)
+def update_task(
+    task_id: UUID,
+    taskUpdate: TaskUpdate,
+    session: SessionDep,
+    current_user: User = Depends(get_current_user),
+):
+    task_db = session.exec(
+        select(Task).where(Task.id == task_id, Task.user_id == current_user.id)
+    ).one_or_none()
+
     if not task_db:
         raise HTTPException(status_code=404, detail="Task not found")
 
@@ -216,10 +244,27 @@ def update_task(task_id: UUID, taskUpdate: TaskUpdate, session: SessionDep):
 
 
 @app.delete("/tasks/bulk-delete")
-def bulk_delete_tasks(task_ids: list[UUID], session: SessionDep):
+def bulk_delete_tasks(
+    task_ids: list[UUID],
+    session: SessionDep,
+    current_user: User = Depends(get_current_user),
+):
     try:
+
+        # retrieve tasks that belong to the current user
+        tasks_to_delete = session.exec(
+            select(Task.id).where(
+                Task.user_id == current_user.id, Task.id.in_(task_ids)
+            )
+        ).all()
+
+        if not tasks_to_delete:
+            raise HTTPException(
+                status_code=404, detail="No tasks found to delete for the current user."
+            )
+
         # delete every task in received list
-        session.exec(delete(Task).where(Task.id.in_(task_ids)))
+        session.exec(delete(Task).where(Task.id.in_(tasks_to_delete)))
         session.commit()
         return {"success": True}
     except Exception as e:
@@ -228,8 +273,13 @@ def bulk_delete_tasks(task_ids: list[UUID], session: SessionDep):
 
 
 @app.delete("/tasks/{task_id}")
-def delete_task(task_id: UUID, session: SessionDep):
-    task = session.get(Task, task_id)
+def delete_task(
+    task_id: UUID, session: SessionDep, current_user: User = Depends(get_current_user)
+):
+    task = session.exec(
+        select(Task).where(Task.id == task_id, Task.user_id == current_user.id)
+    ).one_or_none()
+
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
     session.delete(task)

@@ -1,7 +1,6 @@
 from typing import Annotated
 from sqlmodel import create_engine, SQLModel, Session
 from fastapi import Depends
-from models import Task
 from config import DB_URL
 
 # create db engine
