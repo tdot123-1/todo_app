@@ -24,3 +24,14 @@ export interface QueryOptions {
   sort: "updated" | "deadline" | "priority";
   order: "asc" | "desc";
 }
+
+interface FetchedTaskList {
+  tasks: Task[];
+  total_count: number;
+}
+
+export interface FetchedData {
+  success: boolean;
+  data?: Task | FetchedTaskList;
+  status: number;
+}

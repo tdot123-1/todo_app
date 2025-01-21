@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Task, TaskPriority } from "../../types";
+import { useContext, useEffect, useState } from "react";
+import { FetchedData, Task, TaskPriority } from "../../types";
 import { Button } from "../button/Button";
 import { DetailsTextBox, TaskDetailsCard, Wrapper } from "./TaskDetails.styles";
 import { ButtonContainer, ButtonContent } from "../button/Button.styles";
@@ -15,37 +15,81 @@ import {
 import FinishTaskButton from "../finish-task/FinishTaskButton";
 import { theme } from "../../styles";
 import { CheckBoxWrapper } from "../tasks-list/TaskListItem.styles";
+import { SessionContext } from "../../contexts/SessionContext";
 
 interface TaskDetailsCompProps {
   taskId: string;
 }
 
 const TaskDetailsComp = ({ taskId }: TaskDetailsCompProps) => {
+  const session = useContext(SessionContext);
+
+  if (!session) {
+    throw new Error("Session not provided");
+  }
+
+  const { fetchWithToken, handleLogout } = session;
+
   const [taskData, setTaskData] = useState<Task>();
   const [error, setError] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
+  // const fetchTask = async () => {
+  //   setError(false);
+  //   try {
+  //     const response = await fetch(
+  //       `${import.meta.env.VITE_API_URL}/tasks/${taskId}`
+  //     );
+
+  //     if (!response.ok) {
+  //       if (response.status === 404) {
+  //         return navigate("/task-not-found");
+  //       }
+  //       throw new Error(`Response status: ${response.status}`);
+  //     }
+
+  //     const data: Task = await response.json();
+  //     setTaskData(data);
+  //   } catch (error: any) {
+  //     setError(true);
+  //     console.error("Failed to fetch task: ", error);
+  //   }
+  // };
+
   const fetchTask = async () => {
     setError(false);
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/tasks/${taskId}`
-      );
+    setIsLoading(true);
+    await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      if (!response.ok) {
-        if (response.status === 404) {
+    const endpoint = `/tasks/${taskId}`;
+
+    try {
+      const data: FetchedData = await fetchWithToken(endpoint);
+
+      if (!data.success) {
+        console.error("Error fetching task: ", data.status);
+        if (data.status === 404) {
           return navigate("/task-not-found");
+        } else if (data.status === 401) {
+          handleLogout();
+          return navigate("/login");
         }
-        throw new Error(`Response status: ${response.status}`);
       }
 
-      const data: Task = await response.json();
-      setTaskData(data);
-    } catch (error: any) {
+      // check if correct data type
+      if (data.data && "id" in data.data) {
+        setTaskData(data.data);
+      } else {
+        throw new Error(`Incorrect data type returned: ${data.status}`);
+      }
+    } catch (error) {
       setError(true);
       console.error("Failed to fetch task: ", error);
+    } finally {
+      setIsLoading(false)
     }
   };
 
@@ -56,6 +100,14 @@ const TaskDetailsComp = ({ taskId }: TaskDetailsCompProps) => {
   const handleRetry = () => {
     setRetryCount((prev) => prev + 1);
   };
+
+  if (isLoading) {
+    return (
+      <>
+        <Loading />
+      </>
+    );
+  }
 
   if (error) {
     return (

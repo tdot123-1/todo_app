@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { QueryOptions, Task } from "../../types";
+import { useContext, useEffect, useState } from "react";
+import { FetchedData, QueryOptions, Task } from "../../types";
 import TaskListItem from "./TaskListItem";
 import { EmptyTasksList, TasksGrid, ToolbarWrapper } from "./TasksList.styles";
 import FetchError from "../fetch-error/FetchError";
@@ -10,19 +10,30 @@ import {
   IconSettingsDown,
   IconSettingsUp,
 } from "@tabler/icons-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ClearCompletedButton from "../clear-completed-tasks/ClearCompletedButton";
 import Pagination from "../pagination/Pagination";
 import { LIMIT } from "../../constants";
 import LoadingTasks from "../loading/LoadingTasks";
 import { theme } from "../../styles";
 import SortTasks from "../sort-tasks/SortTasks";
+import { SessionContext } from "../../contexts/SessionContext";
 
 interface TasksListProps {
   queryOptions: QueryOptions;
 }
 
 const TasksList = ({ queryOptions }: TasksListProps) => {
+  const session = useContext(SessionContext);
+
+  if (!session) {
+    throw new Error("Session not provided");
+  }
+
+  const { fetchWithToken, handleLogout } = session;
+
+  const navigate = useNavigate();
+
   const [allTasks, setAllTasks] = useState<Task[]>([]);
   const [error, setError] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
@@ -32,26 +43,65 @@ const TasksList = ({ queryOptions }: TasksListProps) => {
 
   const { page, order, sort } = queryOptions;
 
+  // const fetchAllTasks = async () => {
+  //   setIsLoading(true);
+  //   setError(false);
+
+  //   // await new Promise((resolve) => setTimeout(resolve, 1500));
+  //   try {
+  //     const response = await fetch(
+  //       `${import.meta.env.VITE_API_URL}/tasks?limit=${LIMIT}&offset=${
+  //         LIMIT * page - LIMIT
+  //       }&order=${order}&sort_by=${sort}`
+  //     );
+  //     if (!response.ok) {
+  //       throw new Error(`Response status: ${response.status}`);
+  //     }
+
+  //     const data = await response.json();
+
+  //     setAllTasks(data.tasks);
+  //     if (totalItems === null) {
+  //       setTotalItems(data.total_count);
+  //     }
+  //   } catch (error) {
+  //     console.error("Failed to fetch tasks data: ", error);
+  //     setError(true);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
   const fetchAllTasks = async () => {
     setIsLoading(true);
     setError(false);
 
+    const endpoint = `/tasks?limit=${LIMIT}&offset=${
+      LIMIT * page - LIMIT
+    }&order=${order}&sort_by=${sort}`;
+
     // await new Promise((resolve) => setTimeout(resolve, 1500));
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/tasks?limit=${LIMIT}&offset=${
-          LIMIT * page - LIMIT
-        }&order=${order}&sort_by=${sort}`
-      );
-      if (!response.ok) {
-        throw new Error(`Response status: ${response.status}`);
+      // function will throw error if fetch failed
+      // else it will return {data: Task[], total_count: int}
+      const data: FetchedData = await fetchWithToken(endpoint);
+
+      if (!data.success || !data.data) {
+        if (data.status === 401) {
+          handleLogout();
+          return navigate("/login");
+        }
+        throw new Error(`Response was not ok: ${data.status}`);
       }
 
-      const data = await response.json();
-
-      setAllTasks(data.tasks);
-      if (totalItems === null) {
-        setTotalItems(data.total_count);
+      // check if correct type of data was fetched.
+      if ("tasks" in data.data && "total_count" in data.data) {
+        setAllTasks(data.data.tasks);
+        if (totalItems === null) {
+          setTotalItems(data.data.total_count);
+        }
+      } else {
+        throw new Error(`Error fetching task data: ${data.status}`);
       }
     } catch (error) {
       console.error("Failed to fetch tasks data: ", error);
@@ -80,11 +130,6 @@ const TasksList = ({ queryOptions }: TasksListProps) => {
     setDisplayTools((prev) => !prev);
   };
 
-  // show error state
-  if (error) {
-    return <FetchError handleRetry={handleRetry} />;
-  }
-
   // show loading state
   if (isLoading) {
     return (
@@ -112,6 +157,11 @@ const TasksList = ({ queryOptions }: TasksListProps) => {
         />
       </>
     );
+  }
+
+  // show error state
+  if (error) {
+    return <FetchError handleRetry={handleRetry} />;
   }
 
   return (
