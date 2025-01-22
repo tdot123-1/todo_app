@@ -42,7 +42,7 @@ const TaskDetailsComp = ({ taskId, edit }: TaskDetailsCompProps) => {
   const fetchTask = async () => {
     setError(false);
     setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    // await new Promise((resolve) => setTimeout(resolve, 1500));
 
     const endpoint = `/tasks/${taskId}`;
 
