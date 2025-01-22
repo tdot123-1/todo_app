@@ -159,6 +159,7 @@ const TaskDetailsComp = ({ taskId, edit }: TaskDetailsCompProps) => {
                 <FinishTaskButton
                   isFinished={taskData.completed}
                   taskId={taskData.id}
+                  refetch={handleRetry}
                 />
                 <DeleteTaskButton taskId={taskData.id} />
               </ButtonContainer>

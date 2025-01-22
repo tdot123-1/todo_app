@@ -10,10 +10,15 @@ import { FetchedData } from "../../types";
 interface FinishTaskButtonProps {
   isFinished: boolean;
   taskId: string;
+  refetch: () => void;
 }
 
 // need error handling
-const FinishTaskButton = ({ isFinished, taskId }: FinishTaskButtonProps) => {
+const FinishTaskButton = ({
+  isFinished,
+  taskId,
+  refetch,
+}: FinishTaskButtonProps) => {
   const session = useContext(SessionContext);
 
   if (!session) {
@@ -51,7 +56,8 @@ const FinishTaskButton = ({ isFinished, taskId }: FinishTaskButtonProps) => {
       // check if correct data was returned
       if ("id" in data.data) {
         console.log("Task finished");
-        navigate(`/tasks/${data.data.id}`);
+        // navigate(`/tasks/${data.data.id}`);
+        refetch();
       } else {
         throw new Error(`Incorrect data type returned: ${data.status}`);
       }
