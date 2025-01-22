@@ -43,6 +43,7 @@ export const theme = {
     nav: 24,
     logo: 50,
     md: 30,
+    lg: 80,
   },
 };
 
