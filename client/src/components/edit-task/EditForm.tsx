@@ -63,22 +63,6 @@ const EditForm = ({ task }: EditFormProps) => {
       } else {
         throw new Error(`Incorrect data type returned: ${data.status}`);
       }
-
-      // const response = await fetch(
-      //   `${import.meta.env.VITE_API_URL}/tasks/${task.id}`,
-      //   {
-      //     method: "PATCH",
-      //     headers: { "Content-Type": "application/json" },
-      //     body: JSON.stringify(taskUpdate),
-      //   }
-      // );
-
-      // if (response.ok) {
-      //   console.log("Success");
-      //   navigate("/tasks", { replace: true });
-      // } else {
-      //   console.error(`Error creating task: ${response.status}`);
-      // }
     } catch (error) {
       console.error("Error updating task: ", error);
       setEditError("Something went wrong, please try again.");

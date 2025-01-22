@@ -61,22 +61,6 @@ const FinishTaskButton = ({
       } else {
         throw new Error(`Incorrect data type returned: ${data.status}`);
       }
-
-      // const response = await fetch(
-      //   `${import.meta.env.VITE_API_URL}/tasks/${taskId}`,
-      //   {
-      //     method: "PATCH",
-      //     headers: { "Content-Type": "application/json" },
-      //     body: JSON.stringify({ completed: !isFinished }),
-      //   }
-      // );
-
-      // if (response.ok) {
-      //   console.log("Success");
-      //   navigate("/tasks", { replace: true });
-      // } else {
-      //   console.error(`Error finishing task: ${response.status}`);
-      // }
     } catch (error) {
       console.error("Error finishing task: ", error);
     } finally {

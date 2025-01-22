@@ -44,19 +44,6 @@ const DeleteTaskButton = ({ taskId }: DeleteTaskButtonProps) => {
 
       console.log("Task deleted");
       navigate("/tasks", { replace: true });
-
-      // const response = await fetch(
-      //   `${import.meta.env.VITE_API_URL}/tasks/${taskId}`,
-      //   {
-      //     method: "DELETE",
-      //   }
-      // );
-      // if (response.ok) {
-      //   console.log("Task deleted");
-      //   navigate("/tasks", { replace: true });
-      // } else {
-      //   console.error("Error deleting task: ", response.status);
-      // }
     } catch (error) {
       console.error("Failed to delete task: ", error);
       // show error message

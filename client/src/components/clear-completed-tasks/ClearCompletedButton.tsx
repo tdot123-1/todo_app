@@ -12,7 +12,6 @@ interface ClearCompletedButtonProps {
   refetch: () => void;
 }
 
-//(!) update to use fetch with token /////////////////
 const ClearCompletedButton = ({
   tasks,
   refetch,
@@ -51,7 +50,11 @@ const ClearCompletedButton = ({
     const endpoint = "/tasks/bulk-delete";
 
     try {
-      const data: FetchedData = await fetchWithToken(endpoint, "DELETE", completedTaskIds);
+      const data: FetchedData = await fetchWithToken(
+        endpoint,
+        "DELETE",
+        completedTaskIds
+      );
 
       if (!data.success) {
         console.error("Error deleting task: ", data.status);
@@ -67,26 +70,6 @@ const ClearCompletedButton = ({
 
       console.log("Completed tasks cleared");
       refetch();
-
-      // bulk delete array of task id's
-      // const response = await fetch(
-      //   `${import.meta.env.VITE_API_URL}/tasks/bulk-delete`,
-      //   {
-      //     method: "DELETE",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify(completedTaskIds),
-      //   }
-      // );
-
-      // if (response.ok) {
-      //   console.log("Tasks deleted");
-      //   // refetch the list of tasks after deletion
-      //   refetch();
-      // } else {
-      //   throw new Error(`Error deleting tasks: ${response.status}`);
-      // }
     } catch (error) {
       console.error("Error deleting tasks: ", error);
       setError("Something went wrong, please try again.");
