@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const LogoutButtonDiv = styled.div`
   position: fixed;
-  bottom: 0.5rem;
+  bottom: 1rem;
   left: 0.5rem;
   width: fit-content;
   height: fit-content;

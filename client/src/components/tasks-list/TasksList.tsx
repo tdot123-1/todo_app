@@ -1,7 +1,12 @@
 import { useContext, useEffect, useState } from "react";
 import { FetchedData, QueryOptions, Task } from "../../types";
 import TaskListItem from "./TaskListItem";
-import { EmptyTasksList, TasksGrid, ToolbarWrapper } from "./TasksList.styles";
+import {
+  EmptyTasksList,
+  TasksGrid,
+  ToolbarInnerWrapper,
+  ToolbarWrapper,
+} from "./TasksList.styles";
 import FetchError from "../fetch-error/FetchError";
 import { Button } from "../button/Button";
 import { ButtonContent } from "../button/Button.styles";
@@ -151,10 +156,18 @@ const TasksList = ({ queryOptions }: TasksListProps) => {
           </div>
 
           {displayTools && (
-            <ToolbarWrapper>
-              <SortTasks sort={sort} order={order} />
-              <ClearCompletedButton tasks={allTasks} refetch={handleRetry} />
-            </ToolbarWrapper>
+            <>
+              <ToolbarWrapper>
+                <SortTasks sort={sort} order={order} />
+                <ClearCompletedButton tasks={allTasks} refetch={handleRetry} />
+              </ToolbarWrapper>
+              <ToolbarInnerWrapper>
+                <input />
+                <div>
+                  <Button>Search</Button>
+                </div>
+              </ToolbarInnerWrapper>
+            </>
           )}
 
           <TasksGrid>

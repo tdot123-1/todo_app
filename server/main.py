@@ -6,7 +6,7 @@ from sqlmodel import select, delete
 from uuid import UUID
 from datetime import datetime, timedelta
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import func
+from sqlalchemy import func, nulls_last
 from auth import (
     AuthDep,
     Token,
@@ -129,9 +129,6 @@ def login_for_access_token(form_data: PasswordDep, session: SessionDep) -> Token
     return Token(access_token=access_token, token_type="bearer")
 
 
-# logout
-
-
 # tasks
 ## change to only retrieve tasks assosciated with current user
 @app.get("/tasks")
@@ -154,7 +151,13 @@ def read_all_tasks(
     # dynamically build sorting query
     sort_field = sort_field_map.get(sort_by, Task.updated)
 
-    order_by_clause = sort_field.asc() if order == "asc" else sort_field.desc()
+    # sort null values to be last for sorting by deadline
+    if sort_by == "deadline":
+        order_by_clause = nulls_last(
+            sort_field.asc() if order == "asc" else sort_field.desc()
+        )
+    else:
+        order_by_clause = sort_field.asc() if order == "asc" else sort_field.desc()
 
     task_query = session.exec(
         select(Task)
