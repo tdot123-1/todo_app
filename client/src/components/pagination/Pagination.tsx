@@ -16,7 +16,7 @@ const Pagination = ({ totalItems, queryOptions }: PaginationProps) => {
   const [totalPages, setTotalPages] = useState(0);
   //   const [pages, setPages] = useState<(number | string)[]>([]);
 
-  const { page, order, sort } = queryOptions;
+  const { page, order, sort, searchQuery } = queryOptions;
 
   useEffect(() => {
     setTotalPages(Math.ceil(totalItems / LIMIT));
@@ -32,7 +32,7 @@ const Pagination = ({ totalItems, queryOptions }: PaginationProps) => {
         <Link
           to={`/tasks?page=${
             page - 1 >= 1 ? page - 1 : page
-          }&sort=${sort}&order=${order}`}
+          }&sort=${sort}&order=${order}&q=${searchQuery ? searchQuery : ""}`}
         >
           <PaginationLink $active={false} $disabled={!(page - 1 >= 1)}>
             <IconChevronLeft size={theme.iconSizes.button} />
@@ -52,7 +52,9 @@ const Pagination = ({ totalItems, queryOptions }: PaginationProps) => {
           }
           return (
             <Link
-              to={`/tasks?page=${nextPage}&sort=${sort}&order=${order}`}
+              to={`/tasks?page=${nextPage}&sort=${sort}&order=${order}&q=${
+                searchQuery ? searchQuery : ""
+              }`}
               key={`${p}-${index}`}
             >
               <PaginationLink $active={false}>{p}</PaginationLink>
@@ -62,7 +64,9 @@ const Pagination = ({ totalItems, queryOptions }: PaginationProps) => {
           return (
             <Link
               key={`${p}-${index}`}
-              to={`/tasks?page=${p}&sort=${sort}&order=${order}`}
+              to={`/tasks?page=${p}&sort=${sort}&order=${order}&q=${
+                searchQuery ? searchQuery : ""
+              }`}
             >
               <PaginationLink $active={page === p}>{p}</PaginationLink>
             </Link>
@@ -73,7 +77,7 @@ const Pagination = ({ totalItems, queryOptions }: PaginationProps) => {
         <Link
           to={`/tasks?page=${
             page + 1 <= totalPages ? page + 1 : page
-          }&sort=${sort}&order=${order}`}
+          }&sort=${sort}&order=${order}&q=${searchQuery ? searchQuery : ""}`}
         >
           <PaginationLink $active={false} $disabled={!(page + 1 <= totalPages)}>
             <IconChevronRight size={theme.iconSizes.button} />

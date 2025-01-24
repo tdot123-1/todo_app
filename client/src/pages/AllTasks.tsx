@@ -9,14 +9,15 @@ const AllTasks = () => {
     page: 1,
     order: "desc",
     sort: "updated",
+    searchQuery: "",
   });
-
 
   // get search params to pass down to components
   useEffect(() => {
     const pageQuery = searchParams.get("page");
     const orderQuery = searchParams.get("order");
     const sortQuery = searchParams.get("sort");
+    const searchQuery = searchParams.get("q");
 
     setQueryOptions((prev) => ({
       ...prev,
@@ -29,6 +30,7 @@ const AllTasks = () => {
         sortQuery === "priority"
           ? sortQuery
           : prev.sort,
+      searchQuery: searchQuery || "",
     }));
   }, [searchParams]);
 

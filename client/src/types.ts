@@ -23,6 +23,7 @@ export interface QueryOptions {
   page: number;
   sort: "updated" | "deadline" | "priority";
   order: "asc" | "desc";
+  searchQuery: string;
 }
 
 interface FetchedTaskList {

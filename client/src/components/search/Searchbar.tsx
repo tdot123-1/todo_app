@@ -18,13 +18,13 @@ interface SearchbarProps {
 }
 
 const Searchbar = ({ queryOptions }: SearchbarProps) => {
-  const [query, setQuery] = useState("");
+  const { order, sort, searchQuery } = queryOptions;
+
+  const [query, setQuery] = useState(searchQuery);
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
   const [error, setError] = useState("");
 
   const [_, setSearchParams] = useSearchParams();
-
-  const { order, sort } = queryOptions;
 
   const updateSearchParams = (newQuery: string) => {
     setSearchParams((prev) => {
@@ -39,13 +39,16 @@ const Searchbar = ({ queryOptions }: SearchbarProps) => {
   };
 
   useEffect(() => {
+    console.log("searchparams: ", searchQuery);
     if (timeoutId) {
       clearTimeout(timeoutId);
     }
 
     const newTimeout = setTimeout(() => {
       // update searchparams
-      updateSearchParams(query);
+      if (query !== searchQuery) {
+        updateSearchParams(query);
+      }
     }, 500);
 
     setTimeoutId(newTimeout);
