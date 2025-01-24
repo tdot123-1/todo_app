@@ -119,7 +119,7 @@ const TasksList = ({ queryOptions }: TasksListProps) => {
 
         {displayTools && (
           <ToolbarWrapper>
-            <SortTasks sort={sort} order={order} />
+            <SortTasks queryOptions={queryOptions} />
             <ClearCompletedButton tasks={allTasks} refetch={handleRetry} />
           </ToolbarWrapper>
         )}
@@ -154,10 +154,10 @@ const TasksList = ({ queryOptions }: TasksListProps) => {
           {displayTools && (
             <>
               <ToolbarWrapper>
-                <SortTasks sort={sort} order={order} />
+                <SortTasks queryOptions={queryOptions} />
                 <ClearCompletedButton tasks={allTasks} refetch={handleRetry} />
               </ToolbarWrapper>
-              <Searchbar />
+              <Searchbar queryOptions={queryOptions} />
             </>
           )}
 

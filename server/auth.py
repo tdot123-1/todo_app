@@ -19,7 +19,7 @@ AuthDep = Annotated[str, Depends(oauth2_scheme)]
 
 PasswordDep = Annotated[OAuth2PasswordRequestForm, Depends()]
 
-ACCESS_TOKEN_EXPIRES = 30
+ACCESS_TOKEN_EXPIRES = 60
 
 
 # token class

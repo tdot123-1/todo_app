@@ -5,26 +5,28 @@ import { Button } from "../button/Button";
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 import { theme } from "../../styles";
 import { ButtonContent } from "../button/Button.styles";
+import { QueryOptions } from "../../types";
 
 interface SortTasksProps {
-  sort: "updated" | "deadline" | "priority";
-  order: "asc" | "desc";
+  queryOptions: QueryOptions
 }
 
-const SortTasks = ({ sort, order }: SortTasksProps) => {
+const SortTasks = ({ queryOptions }: SortTasksProps) => {
+  const { sort, order} = queryOptions
   const [sortBy, setSortBy] = useState(sort);
   const [orderBy, setOrderBy] = useState(order);
   const [_, setSearchParams] = useSearchParams();
 
-  const orderOptions = ["updated", "deadline", "priority"];
+  const sortOptions = ["updated", "deadline", "priority"];
 
   // update search params if sorting is applied to trigger refetch of data
   const updateParams = (sort: string, order: string) => {
     setSearchParams((prev) => {
       const newParams = new URLSearchParams(prev);
+      newParams.set("page", "1");
       newParams.set("sort", sort);
       newParams.set("order", order);
-      newParams.set("page", "1");
+
       return newParams;
     });
   };
@@ -55,7 +57,7 @@ const SortTasks = ({ sort, order }: SortTasksProps) => {
             onChange={(v) => handleSortChange(v.target.value)}
             value={sortBy}
           >
-            {orderOptions.map((option) => (
+            {sortOptions.map((option) => (
               <option key={option} value={option}>
                 {option}
               </option>

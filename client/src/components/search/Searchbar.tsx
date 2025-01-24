@@ -4,16 +4,65 @@ import { ButtonContent } from "../button/Button.styles";
 import {
   OuterWrapper,
   SearchbarWrapper,
+  SearchError,
   SearchInput,
   SearchLabel,
 } from "./Searchbar.styles";
 import { theme } from "../../styles";
+import { ChangeEvent, useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { QueryOptions } from "../../types";
 
-const Searchbar = () => {
+interface SearchbarProps {
+  queryOptions: QueryOptions;
+}
+
+const Searchbar = ({ queryOptions }: SearchbarProps) => {
+  const [query, setQuery] = useState("");
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+  const [error, setError] = useState("");
+
+  const [_, setSearchParams] = useSearchParams();
+
+  const { order, sort } = queryOptions;
+
+  const updateSearchParams = (newQuery: string) => {
+    setSearchParams((prev) => {
+      const newParams = new URLSearchParams(prev);
+      newParams.set("page", "1");
+      newParams.set("sort", sort);
+      newParams.set("order", order);
+      newParams.set("q", newQuery);
+
+      return newParams;
+    });
+  };
+
+  useEffect(() => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+
+    const newTimeout = setTimeout(() => {
+      // update searchparams
+      updateSearchParams(query);
+    }, 500);
+
+    setTimeoutId(newTimeout);
+
+    return () => clearTimeout(newTimeout);
+  }, [query]);
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    console.log(event.target.value);
+    setQuery(event.target.value);
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(event.target);
+    updateSearchParams(query);
   };
+
   return (
     <>
       <OuterWrapper>
@@ -24,6 +73,8 @@ const Searchbar = () => {
               name="query"
               id="query"
               placeholder="Search tasks..."
+              onChange={handleChange}
+              value={query}
             />
             <div>
               <Button type="submit">
@@ -35,6 +86,7 @@ const Searchbar = () => {
             </div>
           </SearchbarWrapper>
         </form>
+        {error && <SearchError>{error}</SearchError>}
       </OuterWrapper>
     </>
   );

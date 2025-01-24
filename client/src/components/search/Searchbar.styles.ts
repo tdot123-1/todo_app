@@ -28,3 +28,11 @@ export const OuterWrapper = styled.div`
   width: fit-content;
   margin-top: 0.5rem;
 `;
+
+export const SearchError = styled.p`
+  text-align: center;
+  color: ${(props) => props.theme.dangerColor};
+  font-style: italic;
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+`;
