@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { FetchedData, QueryOptions, Task } from "../../types";
 import TaskListItem from "./TaskListItem";
-import { EmptyTasksList, TasksGrid, ToolbarWrapper } from "./TasksList.styles";
+import { EmptyTasksList, TasksGrid } from "./TasksList.styles";
 import FetchError from "../fetch-error/FetchError";
 import { Button } from "../button/Button";
 import { ButtonContent } from "../button/Button.styles";
@@ -11,15 +11,13 @@ import {
   IconSettingsUp,
 } from "@tabler/icons-react";
 import { Link, useNavigate } from "react-router-dom";
-import ClearCompletedButton from "../clear-completed-tasks/ClearCompletedButton";
 import Pagination from "../pagination/Pagination";
 import { LIMIT } from "../../constants";
 import LoadingTasks from "../loading/LoadingTasks";
 import { theme } from "../../styles";
-import SortTasks from "../sort-tasks/SortTasks";
 import { SessionContext } from "../../contexts/SessionContext";
-import Searchbar from "../search/Searchbar";
 import NoResults from "../search/NoResults";
+import Toolbar from "../toolbar/Toolbar";
 
 interface TasksListProps {
   queryOptions: QueryOptions;
@@ -98,14 +96,14 @@ const TasksList = ({ queryOptions }: TasksListProps) => {
     setRetryCount((prev) => prev + 1);
   };
 
+  const handleDisplayTools = () => {
+    setDisplayTools((prev) => !prev);
+  };
+
   // refetch when page changes
   useEffect(() => {
     fetchAllTasks();
   }, [page, order, sort, searchQuery]);
-
-  const handleDisplayTools = () => {
-    setDisplayTools((prev) => !prev);
-  };
 
   // show loading state
   if (isLoading) {
@@ -120,13 +118,12 @@ const TasksList = ({ queryOptions }: TasksListProps) => {
             )}
           </Button>
         </div>
-
-        {displayTools && (
-          <ToolbarWrapper>
-            <SortTasks queryOptions={queryOptions} />
-            <ClearCompletedButton tasks={allTasks} refetch={handleRetry} />
-          </ToolbarWrapper>
-        )}
+        <Toolbar
+          queryOptions={queryOptions}
+          tasks={allTasks}
+          refetch={handleRetry}
+          displayTools={displayTools}
+        />
         <LoadingTasks />
         <Pagination
           queryOptions={queryOptions}
@@ -154,16 +151,12 @@ const TasksList = ({ queryOptions }: TasksListProps) => {
               )}
             </Button>
           </div>
-
-          {displayTools && (
-            <>
-              <ToolbarWrapper>
-                <SortTasks queryOptions={queryOptions} />
-                <ClearCompletedButton tasks={allTasks} refetch={handleRetry} />
-              </ToolbarWrapper>
-              <Searchbar queryOptions={queryOptions} />
-            </>
-          )}
+          <Toolbar
+            queryOptions={queryOptions}
+            tasks={allTasks}
+            refetch={handleRetry}
+            displayTools={displayTools}
+          />
 
           <TasksGrid>
             {allTasks.map((task) => (
@@ -199,16 +192,12 @@ const TasksList = ({ queryOptions }: TasksListProps) => {
               )}
             </Button>
           </div>
-
-          {displayTools && (
-            <>
-              <ToolbarWrapper>
-                <SortTasks queryOptions={queryOptions} />
-                <ClearCompletedButton tasks={allTasks} refetch={handleRetry} />
-              </ToolbarWrapper>
-              <Searchbar queryOptions={queryOptions} />
-            </>
-          )}
+          <Toolbar
+            queryOptions={queryOptions}
+            tasks={allTasks}
+            refetch={handleRetry}
+            displayTools={displayTools}
+          />
           <NoResults />
           <Pagination
             queryOptions={queryOptions}
