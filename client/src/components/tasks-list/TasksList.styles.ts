@@ -45,11 +45,3 @@ export const ToolbarWrapper = styled.div`
   align-items: end;
 `;
 
-export const ToolbarInnerWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  gap: 0.5rem;
-  align-items: center;
-  margin-top: 0.5rem;
-`;

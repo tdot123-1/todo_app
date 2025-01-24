@@ -1,12 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { FetchedData, QueryOptions, Task } from "../../types";
 import TaskListItem from "./TaskListItem";
-import {
-  EmptyTasksList,
-  TasksGrid,
-  ToolbarInnerWrapper,
-  ToolbarWrapper,
-} from "./TasksList.styles";
+import { EmptyTasksList, TasksGrid, ToolbarWrapper } from "./TasksList.styles";
 import FetchError from "../fetch-error/FetchError";
 import { Button } from "../button/Button";
 import { ButtonContent } from "../button/Button.styles";
@@ -23,6 +18,7 @@ import LoadingTasks from "../loading/LoadingTasks";
 import { theme } from "../../styles";
 import SortTasks from "../sort-tasks/SortTasks";
 import { SessionContext } from "../../contexts/SessionContext";
+import Searchbar from "../search/Searchbar";
 
 interface TasksListProps {
   queryOptions: QueryOptions;
@@ -161,12 +157,7 @@ const TasksList = ({ queryOptions }: TasksListProps) => {
                 <SortTasks sort={sort} order={order} />
                 <ClearCompletedButton tasks={allTasks} refetch={handleRetry} />
               </ToolbarWrapper>
-              <ToolbarInnerWrapper>
-                <input />
-                <div>
-                  <Button>Search</Button>
-                </div>
-              </ToolbarInnerWrapper>
+              <Searchbar />
             </>
           )}
 
