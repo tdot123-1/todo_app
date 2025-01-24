@@ -19,6 +19,7 @@ import { theme } from "../../styles";
 import SortTasks from "../sort-tasks/SortTasks";
 import { SessionContext } from "../../contexts/SessionContext";
 import Searchbar from "../search/Searchbar";
+import NoResults from "../search/NoResults";
 
 interface TasksListProps {
   queryOptions: QueryOptions;
@@ -42,7 +43,7 @@ const TasksList = ({ queryOptions }: TasksListProps) => {
   const [totalItems, setTotalItems] = useState<number | null>(null);
   const [displayTools, setDisplayTools] = useState(false);
 
-  const { page, order, sort } = queryOptions;
+  const { page, order, sort, searchQuery } = queryOptions;
 
   const fetchAllTasks = async () => {
     setIsLoading(true);
@@ -50,7 +51,7 @@ const TasksList = ({ queryOptions }: TasksListProps) => {
 
     const endpoint = `/tasks?limit=${LIMIT}&offset=${
       LIMIT * page - LIMIT
-    }&order=${order}&sort_by=${sort}`;
+    }&order=${order}&sort_by=${sort}&q=${searchQuery}`;
 
     // await new Promise((resolve) => setTimeout(resolve, 1500));
     try {
@@ -70,7 +71,10 @@ const TasksList = ({ queryOptions }: TasksListProps) => {
       // check if correct type of data was fetched.
       if ("tasks" in data.data && "total_count" in data.data) {
         setAllTasks(data.data.tasks);
-        if (totalItems === null) {
+
+        if (data.data.total_count === 0) {
+          setTotalItems(1);
+        } else {
           setTotalItems(data.data.total_count);
         }
       } else {
@@ -97,7 +101,7 @@ const TasksList = ({ queryOptions }: TasksListProps) => {
   // refetch when page changes
   useEffect(() => {
     fetchAllTasks();
-  }, [page, order, sort]);
+  }, [page, order, sort, searchQuery]);
 
   const handleDisplayTools = () => {
     setDisplayTools((prev) => !prev);
@@ -126,7 +130,7 @@ const TasksList = ({ queryOptions }: TasksListProps) => {
         <LoadingTasks />
         <Pagination
           queryOptions={queryOptions}
-          totalItems={totalItems === null ? 0 : totalItems}
+          totalItems={totalItems === null ? 1 : totalItems}
         />
       </>
     );
@@ -171,7 +175,7 @@ const TasksList = ({ queryOptions }: TasksListProps) => {
             totalItems={totalItems === null ? 0 : totalItems}
           />
         </>
-      ) : (
+      ) : searchQuery === "" ? (
         <EmptyTasksList>
           <p>No tasks added yet.</p>
           <h2>Create Your First!</h2>
@@ -184,6 +188,33 @@ const TasksList = ({ queryOptions }: TasksListProps) => {
             </Button>
           </Link>
         </EmptyTasksList>
+      ) : (
+        <>
+          <div style={{ width: "fit-content", marginBottom: "0.2rem" }}>
+            <Button onClick={handleDisplayTools}>
+              {displayTools ? (
+                <IconSettingsUp size={theme.iconSizes.button} />
+              ) : (
+                <IconSettingsDown size={theme.iconSizes.button} />
+              )}
+            </Button>
+          </div>
+
+          {displayTools && (
+            <>
+              <ToolbarWrapper>
+                <SortTasks queryOptions={queryOptions} />
+                <ClearCompletedButton tasks={allTasks} refetch={handleRetry} />
+              </ToolbarWrapper>
+              <Searchbar queryOptions={queryOptions} />
+            </>
+          )}
+          <NoResults />
+          <Pagination
+            queryOptions={queryOptions}
+            totalItems={totalItems === null ? 0 : totalItems}
+          />
+        </>
       )}
     </>
   );

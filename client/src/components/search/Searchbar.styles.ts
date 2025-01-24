@@ -36,3 +36,15 @@ export const SearchError = styled.p`
   font-size: 0.8rem;
   margin-top: 0.5rem;
 `;
+
+export const NoResultsWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 10px;
+  background-color: #1f1f1f;
+  margin: 0.5rem 0 2rem;
+  min-height: 28rem;
+  color: #8a9ad4;
+`;

@@ -4,7 +4,7 @@ import { ButtonContent } from "../button/Button.styles";
 import {
   OuterWrapper,
   SearchbarWrapper,
-  SearchError,
+//   SearchError,
   SearchInput,
   SearchLabel,
 } from "./Searchbar.styles";
@@ -22,7 +22,7 @@ const Searchbar = ({ queryOptions }: SearchbarProps) => {
 
   const [query, setQuery] = useState(searchQuery);
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
-  const [error, setError] = useState("");
+//   const [error, setError] = useState("");
 
   const [_, setSearchParams] = useSearchParams();
 
@@ -89,7 +89,7 @@ const Searchbar = ({ queryOptions }: SearchbarProps) => {
             </div>
           </SearchbarWrapper>
         </form>
-        {error && <SearchError>{error}</SearchError>}
+        {/* {error && <SearchError>{error}</SearchError>} */}
       </OuterWrapper>
     </>
   );

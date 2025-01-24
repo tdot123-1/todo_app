@@ -6,7 +6,7 @@ from sqlmodel import select, delete
 from uuid import UUID
 from datetime import datetime, timedelta
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import func, nulls_last
+from sqlalchemy import func, nulls_last, or_, and_
 from auth import (
     AuthDep,
     Token,
@@ -130,7 +130,6 @@ def login_for_access_token(form_data: PasswordDep, session: SessionDep) -> Token
 
 
 # tasks
-## change to only retrieve tasks assosciated with current user
 @app.get("/tasks")
 def read_all_tasks(
     session: SessionDep,
@@ -139,6 +138,7 @@ def read_all_tasks(
     limit: Annotated[int, Query(le=100)] = 100,
     sort_by: str = Query(default="updated", regex="^(priority|updated|deadline)$"),
     order: str = Query(default="desc", regex="^(asc|desc)$"),
+    q: str | None = None,
 ) -> dict:
 
     # map sort fields to Task model attributes
@@ -159,9 +159,17 @@ def read_all_tasks(
     else:
         order_by_clause = sort_field.asc() if order == "asc" else sort_field.desc()
 
+    if q:
+        where_clause = and_(
+            or_(Task.title.ilike(f"%{q}%"), Task.description.ilike(f"%{q}%")),
+            Task.user_id == current_user.id,
+        )
+    else: 
+        where_clause = Task.user_id == current_user.id
+
     task_query = session.exec(
         select(Task)
-        .where(Task.user_id == current_user.id)
+        .where(where_clause)
         .order_by(order_by_clause)
         .offset(offset)
         .limit(limit)
@@ -170,7 +178,7 @@ def read_all_tasks(
     tasks = task_query.all()
 
     total_count = session.exec(
-        select(func.count(Task.id)).where(Task.user_id == current_user.id)
+        select(func.count(Task.id)).where(where_clause)
     ).one()
 
     return {"tasks": tasks, "total_count": total_count}
